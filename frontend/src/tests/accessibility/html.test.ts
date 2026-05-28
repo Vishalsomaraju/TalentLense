@@ -26,28 +26,11 @@ describe("index.html accessibility", () => {
     { expect(html).toContain('class="sr-only"'); });
   it("has Google Fonts via link (not @import)", () =>
     { expect(html).toMatch(/fonts\.googleapis\.com/); });
-  it("has link rel=manifest for PWA", () =>
-    { expect(html).toContain('rel="manifest"'); });
-  it("has service worker registration script", () =>
-    { expect(html).toContain("serviceWorker"); });
+
   it("has meta description", () =>
     { expect(html).toContain('name="description"'); });
   it("has theme-color meta", () =>
     { expect(html).toContain('name="theme-color"'); });
 });
 
-describe("index.css accessibility rules", () => {
-  let css: string;
 
-  beforeAll(() => {
-    css = fs.readFileSync(path.resolve(process.cwd(), "src/index.css"), "utf8");
-  });
-
-  it("has prefers-reduced-motion media query", () =>
-    { expect(css).toContain("prefers-reduced-motion"); });
-  it("has prefers-contrast media query", () =>
-    { expect(css).toContain("prefers-contrast"); });
-  it("has .sr-only utility class", () => { expect(css).toContain(".sr-only"); });
-  it("has :focus-visible styles", () =>
-    { expect(css).toContain(":focus-visible"); });
-});

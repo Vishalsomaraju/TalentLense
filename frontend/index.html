@@ -6,8 +6,6 @@
     <meta name="description" content="__APP_DESCRIPTION__" />
     <meta name="theme-color" content="#4F46E5" />
 
-    <!-- PWA -->
-    <link rel="manifest" href="/manifest.json" />
 
     <!-- Favicon — inline SVG emoji, zero extra assets -->
     <link
@@ -42,18 +40,6 @@
 
     <script type="module" src="/src/main.tsx"></script>
 
-    <!--
-      Service Worker — registered after page load so it never blocks
-      the initial paint. Enables offline support and fast repeat loads.
-    -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch((err) => {
-            console.warn('[SW] Registration failed:', err);
-          });
-        });
-      }
-    </script>
+
   </body>
 </html>

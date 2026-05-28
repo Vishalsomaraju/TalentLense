@@ -7,8 +7,10 @@ import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
 
-const root = path.resolve(process.cwd());
-const exists = (f: string): boolean => fs.existsSync(path.join(root, f));
+const frontendRoot = path.resolve(process.cwd());
+const repoRoot = path.resolve(process.cwd(), "..");
+const exists = (f: string, isRepoRoot = false): boolean => 
+  fs.existsSync(path.join(isRepoRoot ? repoRoot : frontendRoot, f));
 
 describe("Root config files", () => {
   it("tsconfig.json", () => { expect(exists("tsconfig.json")).toBe(true); });
@@ -18,7 +20,7 @@ describe("Root config files", () => {
   it("eslint.config.js", () => { expect(exists("eslint.config.js")).toBe(true); });
   it("package.json", () => { expect(exists("package.json")).toBe(true); });
   it(".env.example", () => { expect(exists(".env.example")).toBe(true); });
-  it(".gitignore", () => { expect(exists(".gitignore")).toBe(true); });
+  it(".gitignore", () => { expect(exists(".gitignore", true)).toBe(true); });
 });
 
 describe("Security files", () => {
@@ -27,32 +29,27 @@ describe("Security files", () => {
   it("firestore.rules", () => { expect(exists("firestore.rules")).toBe(true); });
 });
 
-describe("PWA files", () => {
-  it("manifest.json", () => { expect(exists("manifest.json")).toBe(true); });
-  it("public/sw.js", () => { expect(exists("public/sw.js")).toBe(true); });
-  it("index.html", () => { expect(exists("index.html")).toBe(true); });
-});
 
 describe("Documentation", () => {
-  it("README.md", () => { expect(exists("README.md")).toBe(true); });
-  it("TESTING.md", () => { expect(exists("TESTING.md")).toBe(true); });
-  it("CONTRIBUTING.md", () => { expect(exists("CONTRIBUTING.md")).toBe(true); });
-  it("LICENSE", () => { expect(exists("LICENSE")).toBe(true); });
+  it("README.md", () => { expect(exists("README.md", true)).toBe(true); });
+  it("TESTING.md", () => { expect(exists("TESTING.md", true)).toBe(true); });
+  it("CONTRIBUTING.md", () => { expect(exists("CONTRIBUTING.md", true)).toBe(true); });
+  it("LICENSE", () => { expect(exists("LICENSE", true)).toBe(true); });
   it("GOOGLE_SERVICES.md", () =>
-    { expect(exists("GOOGLE_SERVICES.md")).toBe(true); });
+    { expect(exists("GOOGLE_SERVICES.md", true)).toBe(true); });
   it("docs/ARCHITECTURE.md", () =>
-    { expect(exists("docs/ARCHITECTURE.md")).toBe(true); });
+    { expect(exists("docs/ARCHITECTURE.md", true)).toBe(true); });
 });
 
 describe("GitHub infrastructure", () => {
   it(".github/workflows/ci.yml", () =>
-    { expect(exists(".github/workflows/ci.yml")).toBe(true); });
+    { expect(exists(".github/workflows/ci.yml", true)).toBe(true); });
   it(".github/pull_request_template.md", () =>
-    { expect(exists(".github/pull_request_template.md")).toBe(true); });
+    { expect(exists(".github/pull_request_template.md", true)).toBe(true); });
   it(".github/ISSUE_TEMPLATE/bug_report.md", () =>
-    { expect(exists(".github/ISSUE_TEMPLATE/bug_report.md")).toBe(true); });
+    { expect(exists(".github/ISSUE_TEMPLATE/bug_report.md", true)).toBe(true); });
   it(".github/ISSUE_TEMPLATE/feature_request.md", () =>
-    { expect(exists(".github/ISSUE_TEMPLATE/feature_request.md")).toBe(true); });
+    { expect(exists(".github/ISSUE_TEMPLATE/feature_request.md", true)).toBe(true); });
 });
 
 describe("Source structure", () => {

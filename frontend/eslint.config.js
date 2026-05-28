@@ -9,7 +9,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import a11y from 'eslint-plugin-jsx-a11y';
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'node_modules', 'eslint.config.js', 'public/sw.js'] },
+  { ignores: ['dist', 'coverage', 'node_modules', 'eslint.config.js', 'postcss.config.js'] },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   {

@@ -1,6 +1,38 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface2);
+  --color-surface-3: var(--surface3);
+  --color-border: var(--border);
+  --color-border-hi: var(--border-hi);
+  --color-border-soft: var(--border-soft);
+  --color-parchment: var(--parchment);
+  --color-parchment-dim: var(--parchment-dim);
+  --color-parchment-muted: var(--parchment-muted);
+  --color-sage: var(--sage);
+  --color-sand: var(--sand);
+  --color-rose: var(--rose);
+  --color-sky: var(--sky);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-panel-in: panel-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  
+  @keyframes fade-up {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes panel-in {
+    0% { opacity: 0; transform: translateY(30px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+}
 
 @layer base {
   :root {
@@ -9,13 +41,15 @@
     --surface2: #141519;
     --surface3: #1a1b21;
     --border: #1e2029;
-    --border-hi: #252733;
+    --border-hi: #252838;
+    --border-soft: #252733;
     --parchment: #ddd0c0;
     --parchment-dim: #a89a8a;
     --parchment-muted: #6b5f54;
     --sage: #8dba85;
     --sand: #b89a6e;
     --rose: #b88a8a;
+    --sky: #7aa8c0;
     --text-primary: #e8eaf0;
     --text-secondary: #7a8394;
     --text-muted: #3e4454;
@@ -34,6 +68,7 @@
   body {
     background: var(--ink);
     color: var(--text-primary);
+    font-family: var(--font-sans);
     position: relative;
     overflow-x: hidden;
     font-size: 13px;

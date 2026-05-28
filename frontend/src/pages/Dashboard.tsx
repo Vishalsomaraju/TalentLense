@@ -1,12 +1,415 @@
 import type React from "react";
+import { useState } from "react";
+import { DashboardLayout } from "../components/layout/DashboardLayout";
+import { CandidateRow } from "../components/candidates/CandidateRow";
+import {
+  CandidateDrawer,
+  type Candidate,
+} from "../components/candidates/CandidateDrawer";
+
+const MOCK_CANDIDATES: Candidate[] = [
+  {
+    id: "1",
+    rank: 1,
+    initials: "AR",
+    name: "Aditya Rao",
+    role: "Senior ML Engineer · 5yr",
+    score: 91,
+    signals: [
+      { label: "Semantic", value: 94 },
+      { label: "Trajectory", value: 88 },
+      { label: "Impact", value: 82 },
+      { label: "Velocity", value: 64 },
+    ],
+    skills: ["PyTorch", "MLOps"],
+    stage: "Shortlisted",
+    reasoning: [
+      "Strong PyTorch depth with production deployment experience.",
+      "Career arc shows deliberate ML platform specialization.",
+      "GitHub signal: 12 repos, 4 with >50 stars.",
+    ],
+  },
+  {
+    id: "2",
+    rank: 2,
+    initials: "SK",
+    name: "Sanya Kapoor",
+    role: "ML Ops Engineer · 4yr",
+    score: 84,
+    signals: [
+      { label: "Semantic", value: 87 },
+      { label: "Trajectory", value: 80 },
+      { label: "Impact", value: 76 },
+      { label: "Velocity", value: 70 },
+    ],
+    skills: ["Kubernetes", "Terraform"],
+    stage: "Interview",
+    reasoning: [
+      "Kubernetes mastery aligned with infra needs.",
+      "Consistent delivery on scalable architectures.",
+    ],
+  },
+  {
+    id: "3",
+    rank: 3,
+    initials: "PM",
+    name: "Priya Mehta",
+    role: "Data Scientist · 3yr",
+    score: 78,
+    signals: [
+      { label: "Semantic", value: 81 },
+      { label: "Trajectory", value: 72 },
+      { label: "Impact", value: 74 },
+      { label: "Velocity", value: 58 },
+    ],
+    skills: ["TensorFlow", "SQL"],
+    stage: "Screening",
+    reasoning: [
+      "Solid analytical foundation but lighter on deep learning frameworks.",
+      "Good trajectory in data pipeline optimization.",
+    ],
+  },
+  {
+    id: "4",
+    rank: 4,
+    initials: "DN",
+    name: "Dev Nair",
+    role: "Backend Engineer · 6yr",
+    score: 72,
+    signals: [
+      { label: "Semantic", value: 75 },
+      { label: "Trajectory", value: 68 },
+      { label: "Impact", value: 70 },
+      { label: "Velocity", value: 55 },
+    ],
+    skills: ["Go", "Postgres"],
+    stage: "Screening",
+    reasoning: [
+      "Strong backend engineering fundamentals.",
+      "Limited direct ML experience, requires onboarding.",
+    ],
+  },
+];
 
 export default function Dashboard(): React.JSX.Element {
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null,
+  );
+
   return (
-    <div className="flex">
-      {/* Sidebar will go here */}
-      <main className="main-content flex-1 p-6 mt-12 ml-[200px]">
-        <h1 className="text-xl">Analytical Dashboard</h1>
-      </main>
-    </div>
+    <DashboardLayout>
+      <div className="border border-border rounded-xl overflow-hidden grid grid-cols-4 mb-5 max-[900px]:grid-cols-2">
+        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b max-[900px]:border-r">
+          <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.15em]">
+            ANALYZED
+          </div>
+          <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
+            24
+          </div>
+          <div className="font-mono text-[10px] text-sage">
+            ↑ 8 from last week
+          </div>
+        </div>
+        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b max-[900px]:border-r-0">
+          <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.15em]">
+            AVG SCORE
+          </div>
+          <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
+            76.8
+          </div>
+          <div className="font-mono text-[10px] text-sage">↑ 2.4% this run</div>
+        </div>
+        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b-0 max-[900px]:border-r">
+          <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.15em]">
+            TOP MATCH
+          </div>
+          <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
+            91%
+          </div>
+          <div className="font-mono text-[10px] text-text-muted">
+            → Aditya Rao
+          </div>
+        </div>
+        <div className="p-4 px-5 bg-surface">
+          <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.15em]">
+            SHORTLISTED
+          </div>
+          <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
+            6
+          </div>
+          <div className="font-mono text-[10px] text-rose">↓ 2 passed</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-[minmax(0,1fr)_300px] gap-5 max-[900px]:grid-cols-1">
+        <section>
+          <div className="flex justify-between items-center mb-3.5">
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-medium text-text-primary">
+                Candidates
+              </span>
+              <span className="text-sm text-text-muted">(24)</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <select className="font-sans text-xs bg-surface-2 border border-border text-text-secondary rounded-md px-2.5 py-1.5 outline-none cursor-pointer">
+                <option>Score: High → Low</option>
+                <option>Score: Low → High</option>
+                <option>Name A–Z</option>
+                <option>Experience</option>
+              </select>
+              <div className="flex gap-1">
+                <button className="w-7 h-7 rounded-md border-none bg-border-hi text-text-primary text-base cursor-pointer flex items-center justify-center">
+                  ≡
+                </button>
+                <button className="w-7 h-7 rounded-md border-none bg-transparent text-text-secondary text-base cursor-pointer flex items-center justify-center">
+                  ⊞
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 flex-wrap mb-3.5">
+            <button className="font-mono text-[11px] text-text-secondary px-3 py-1 bg-surface-2 border border-border rounded-full cursor-pointer transition-colors duration-120 flex items-center gap-1 hover:border-border-hi">
+              All Stages ▾
+            </button>
+            <button className="font-mono text-[11px] text-text-secondary px-3 py-1 bg-surface-2 border border-border rounded-full cursor-pointer transition-colors duration-120 flex items-center gap-1 hover:border-border-hi">
+              Any Experience ▾
+            </button>
+            <button className="font-mono text-[11px] text-text-secondary px-3 py-1 bg-surface-2 border border-border rounded-full cursor-pointer transition-colors duration-120 flex items-center gap-1 hover:border-border-hi">
+              Min Score: 0 ▾
+            </button>
+            <button className="font-mono text-[11px] text-parchment-dim px-3 py-1 bg-surface-3 border border-parchment-muted rounded-full cursor-pointer transition-colors duration-120 flex items-center gap-1">
+              Skills: Any ▾
+            </button>
+          </div>
+
+          <div className="border border-border rounded-xl overflow-hidden bg-surface">
+            <div className="h-10 bg-surface-2 border-b border-border flex items-center px-4 gap-3">
+              <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.12em] w-7 text-right">
+                #
+              </div>
+              <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.12em] flex-1">
+                Candidate
+              </div>
+              <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.12em] w-[68px] text-right">
+                Score
+              </div>
+              <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.12em] w-[120px]">
+                Signals
+              </div>
+              <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.12em] w-[140px]">
+                Skills
+              </div>
+              <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.12em] w-[80px]">
+                Stage
+              </div>
+              <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.12em] w-8 text-center">
+                ···
+              </div>
+            </div>
+
+            {MOCK_CANDIDATES.map((c) => (
+              <CandidateRow
+                key={c.id}
+                {...c}
+                onClick={() => {
+                  setSelectedCandidate(c);
+                }}
+              />
+            ))}
+
+            <div className="h-10 bg-surface-2 border-t border-border px-4 flex justify-between items-center">
+              <div className="font-mono text-[11px] text-text-muted">
+                Showing 1–4 of 24
+              </div>
+              <div className="flex gap-2">
+                <button className="bg-transparent border border-border rounded-md text-text-secondary font-sans text-[11px] px-3 py-1 cursor-pointer transition-colors duration-120 hover:border-border-hi hover:text-text-primary">
+                  ‹ Prev
+                </button>
+                <button className="bg-transparent border border-border rounded-md text-text-secondary font-sans text-[11px] px-3 py-1 cursor-pointer transition-colors duration-120 hover:border-border-hi hover:text-text-primary">
+                  Next ›
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside className="right-column">
+          <div className="bg-surface border border-border rounded-xl p-4 mb-4">
+            <div className="flex justify-between items-center mb-3">
+              <span className="font-mono text-[9px] text-text-muted uppercase">
+                RUN SUMMARY
+              </span>
+              <span className="font-mono text-[9px] text-text-muted">
+                May 28, 2025, 14:32
+              </span>
+            </div>
+            <div className="h-px bg-border mb-2" />
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-[11px] text-text-secondary">Job role</span>
+              <span className="font-mono text-[11px] text-parchment-muted text-right">
+                Senior ML Engineer
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-[11px] text-text-secondary">
+                Resumes analyzed
+              </span>
+              <span className="font-mono text-[11px] text-parchment-muted text-right">
+                24
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-[11px] text-text-secondary">
+                Signals computed
+              </span>
+              <span className="font-mono text-[11px] text-parchment-muted text-right">
+                96
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-[11px] text-text-secondary">
+                Model version
+              </span>
+              <span className="font-mono text-[11px] text-parchment-muted text-right">
+                v2.4.1
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-[11px] text-text-secondary">
+                Processing time
+              </span>
+              <span className="font-mono text-[11px] text-parchment-muted text-right">
+                3.2s
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-surface border border-border rounded-xl p-4 mb-4">
+            <div className="flex justify-between items-center mb-3">
+              <span className="font-mono text-[9px] text-text-muted uppercase">
+                SCORE DISTRIBUTION
+              </span>
+            </div>
+            <div className="h-px bg-border mb-2" />
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[10px] text-text-muted w-9">
+                90-100
+              </span>
+              <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-sage w-[10%]" />
+              </div>
+              <span className="font-mono text-[10px] text-parchment-muted w-3 text-right">
+                1
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[10px] text-text-muted w-9">
+                80-89
+              </span>
+              <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-sage w-[30%]" />
+              </div>
+              <span className="font-mono text-[10px] text-parchment-muted w-3 text-right">
+                3
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[10px] text-text-muted w-9">
+                70-79
+              </span>
+              <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-sand w-[80%]" />
+              </div>
+              <span className="font-mono text-[10px] text-parchment-muted w-3 text-right">
+                8
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[10px] text-text-muted w-9">
+                60-69
+              </span>
+              <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-sand w-[70%]" />
+              </div>
+              <span className="font-mono text-[10px] text-parchment-muted w-3 text-right">
+                7
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[10px] text-text-muted w-9">
+                &lt;60
+              </span>
+              <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-rose w-[50%]" />
+              </div>
+              <span className="font-mono text-[10px] text-parchment-muted w-3 text-right">
+                5
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-surface border border-border rounded-xl p-4">
+            <div className="flex justify-between items-center mb-3">
+              <span className="font-mono text-[9px] text-text-muted uppercase">
+                SIGNAL GAPS <span className="normal-case">(across pool)</span>
+              </span>
+            </div>
+            <div className="h-px bg-border mb-2" />
+
+            <div className="mb-3">
+              <div className="flex justify-between items-baseline mb-1">
+                <span className="text-[11px] text-text-primary">
+                  Learning Velocity
+                </span>
+                <span className="font-mono text-[11px] text-rose">
+                  avg 54 ↓ low
+                </span>
+              </div>
+              <div className="h-1 bg-surface-2 rounded-full relative overflow-hidden">
+                <div className="h-full rounded-full bg-rose w-[54%]" />
+                <div className="absolute right-[20%] top-0 bottom-0 w-[2px] bg-text-muted z-[2]" />
+              </div>
+            </div>
+            <div className="mb-3">
+              <div className="flex justify-between items-baseline mb-1">
+                <span className="text-[11px] text-text-primary">
+                  Project Impact
+                </span>
+                <span className="font-mono text-[11px] text-sand">
+                  avg 68 ↓ below target
+                </span>
+              </div>
+              <div className="h-1 bg-surface-2 rounded-full relative overflow-hidden">
+                <div className="h-full rounded-full bg-sand w-[68%]" />
+                <div className="absolute right-[20%] top-0 bottom-0 w-[2px] bg-text-muted z-[2]" />
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between items-baseline mb-1">
+                <span className="text-[11px] text-text-primary">
+                  Career Trajectory
+                </span>
+                <span className="font-mono text-[11px] text-parchment-muted">
+                  avg 72 → near target
+                </span>
+              </div>
+              <div className="h-1 bg-surface-2 rounded-full relative overflow-hidden">
+                <div className="h-full rounded-full bg-parchment-muted w-[72%]" />
+                <div className="absolute right-[20%] top-0 bottom-0 w-[2px] bg-text-muted z-[2]" />
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <CandidateDrawer
+        isOpen={selectedCandidate !== null}
+        onClose={() => {
+          setSelectedCandidate(null);
+        }}
+        candidate={selectedCandidate}
+      />
+    </DashboardLayout>
   );
 }

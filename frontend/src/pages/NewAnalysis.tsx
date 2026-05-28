@@ -1,0 +1,184 @@
+import React, { useState, useRef } from "react";
+import { DashboardLayout } from "../components/layout/DashboardLayout";
+
+export default function NewAnalysis(): React.JSX.Element {
+  const [jd, setJd] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files.length > 0) {
+      setFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)]);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles && selectedFiles.length > 0) {
+      setFiles((prev) => [...prev, ...Array.from(selectedFiles)]);
+    }
+  };
+
+  const handleRemoveFile = (index: number): void => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="max-w-[900px] mx-auto pt-8 pb-16 px-6">
+        <div className="mb-10 animate-fade-up">
+          <div className="font-mono text-[11px] text-parchment-muted uppercase tracking-[0.2em] mb-3">
+            New Analysis
+          </div>
+          <h1 className="text-3xl font-light text-text-primary tracking-tight">
+            Define the Role
+          </h1>
+          <p className="text-sm text-text-secondary mt-2 max-w-[60ch]">
+            Paste the job description below, then upload candidate resumes to
+            generate predictive AI rankings.
+          </p>
+        </div>
+
+        <div
+          className="space-y-8 animate-fade-up"
+          style={{ animationDelay: "100ms" }}
+        >
+          {/* Section 1: JD Input */}
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <label
+                htmlFor="jd-input"
+                className="text-sm font-medium text-text-primary"
+              >
+                Job Description
+              </label>
+            </div>
+            <textarea
+              id="jd-input"
+              value={jd}
+              onChange={(e) => {
+                setJd(e.target.value);
+              }}
+              placeholder="e.g. We are looking for a Senior Machine Learning Engineer with experience in PyTorch..."
+              className="w-full h-48 bg-surface-2 border border-border rounded-xl p-4 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-parchment-dim transition-colors resize-none"
+            />
+          </section>
+
+          {/* Section 2: Resume Upload */}
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <label
+                htmlFor="resume-upload"
+                className="text-sm font-medium text-text-primary"
+              >
+                Candidate Resumes
+              </label>
+              <span className="text-xs text-text-secondary">PDF or DOCX</span>
+            </div>
+
+            <div
+              role="presentation"
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`relative border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center transition-all duration-200 ${
+                isDragging
+                  ? "border-parchment bg-[rgba(221,208,192,0.03)]"
+                  : "border-border-hi bg-surface-2 hover:border-parchment-dim hover:bg-surface-3"
+              }`}
+            >
+              <div className="w-12 h-12 rounded-full bg-surface-3 border border-border flex items-center justify-center mb-4 text-parchment-muted text-xl">
+                +
+              </div>
+              <p className="text-sm text-text-primary mb-1 text-center">
+                Drag and drop resumes here
+              </p>
+              <p className="text-xs text-text-secondary mb-6 text-center">
+                or click to browse from your computer
+              </p>
+
+              <button
+                type="button"
+                onClick={() => {
+                  fileInputRef.current?.click();
+                }}
+                className="btn-ghost rounded-full px-5 py-2 text-xs border border-border-hi text-parchment-dim hover:border-parchment-muted hover:text-parchment transition-colors"
+              >
+                Select Files
+              </button>
+              <input
+                id="resume-upload"
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileSelect}
+                className="hidden"
+                aria-hidden="true"
+              />
+            </div>
+
+            {/* File List */}
+            {files.length > 0 && (
+              <div className="mt-4 space-y-2">
+                {files.map((file, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between bg-surface-2 border border-border rounded-lg px-4 py-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded bg-surface-3 flex items-center justify-center text-[9px] font-mono text-parchment-muted uppercase">
+                        {file.name.split(".").pop()}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-text-primary font-medium truncate max-w-[300px]">
+                          {file.name}
+                        </span>
+                        <span className="text-[10px] text-text-secondary">
+                          {(file.size / 1024).toFixed(1)} KB
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleRemoveFile(i);
+                      }}
+                      className="text-text-muted hover:text-rose transition-colors px-2 py-1 text-xs"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Action Row */}
+          <div className="pt-6 border-t border-border flex justify-end">
+            <button
+              type="button"
+              disabled={!jd || files.length === 0}
+              className="bg-parchment text-ink px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-[#cfc0b0] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-parchment transform hover:-translate-y-px active:translate-y-0"
+            >
+              Run AI Analysis
+            </button>
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}

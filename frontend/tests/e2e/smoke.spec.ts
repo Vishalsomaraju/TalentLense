@@ -39,10 +39,6 @@ test('page has exactly one h1', async ({ page }) => {
   await expect(page.locator('h1')).toHaveCount(1);
 });
 
-test('manifest.json is linked', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('link[rel="manifest"]')).toHaveCount(1);
-});
 
 // TODO: Replace with the actual core user flow for this challenge
 test('core user flow is reachable', async ({ page }) => {

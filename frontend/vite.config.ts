@@ -4,10 +4,11 @@
  */
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: { '@': resolve(__dirname, './src') },
   },
@@ -17,9 +18,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Split vendor libraries into a separate chunk for better caching
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/analytics'],
+        manualChunks(id) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'vendor';
+          }
+          if (id.includes('node_modules/firebase')) {
+            return 'firebase';
+          }
         },
       },
     },

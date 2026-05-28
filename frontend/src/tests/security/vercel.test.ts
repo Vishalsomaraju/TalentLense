@@ -51,16 +51,5 @@ describe("vercel.json — security headers", () => {
     { expect(headers.find((h) => h.key === "Referrer-Policy")).toBeDefined(); });
   it("Permissions-Policy exists", () =>
     { expect(headers.find((h) => h.key === "Permissions-Policy")).toBeDefined(); });
-  it("sw.js route has no-cache header", () => {
-    const config = readJson("vercel.json") as {
-      headers: Array<{
-        source: string;
-        headers: Array<{ key: string; value: string }>;
-      }>;
-    };
-    const swRoute = config.headers.find((h) => h.source === "/sw.js");
-    expect(
-      swRoute?.headers.find((h) => h.key === "Cache-Control")?.value,
-    ).toContain("no-cache");
-  });
+
 });
