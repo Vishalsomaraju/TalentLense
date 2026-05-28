@@ -19,7 +19,7 @@ const REQUIRED_VARS = [
 
 // Validate at module load — app won't start with missing config
 REQUIRED_VARS.forEach((key) => {
-  if (!import.meta.env[key]) {
+  if (!(import.meta.env as any)[key]) {
     throw new Error(
       `[env] Missing required variable: ${key}\n` +
       `Copy .env.example to .env.local and fill in the values.`
@@ -27,20 +27,22 @@ REQUIRED_VARS.forEach((key) => {
   }
 });
 
+const env = import.meta.env as Record<string, string | undefined>;
+
 export const ENV = {
   firebase: {
-    apiKey:            import.meta.env.VITE_FIREBASE_API_KEY as string,
-    authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string,
-    projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID as string,
-    storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET as string,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID as string,
-    appId:             import.meta.env.VITE_FIREBASE_APP_ID as string,
-    measurementId:     import.meta.env.VITE_GA_MEASUREMENT_ID as string,
+    apiKey:            env.VITE_FIREBASE_API_KEY as string,
+    authDomain:        env.VITE_FIREBASE_AUTH_DOMAIN as string,
+    projectId:         env.VITE_FIREBASE_PROJECT_ID as string,
+    storageBucket:     env.VITE_FIREBASE_STORAGE_BUCKET as string,
+    messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID as string,
+    appId:             env.VITE_FIREBASE_APP_ID as string,
+    measurementId:     env.VITE_GA_MEASUREMENT_ID as string,
   },
   gemini: {
-    apiKey: import.meta.env.VITE_GEMINI_API_KEY as string | undefined,
+    apiKey: env.VITE_GEMINI_API_KEY,
   },
   maps: {
-    apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined,
+    apiKey: env.VITE_GOOGLE_MAPS_API_KEY,
   },
 } as const;

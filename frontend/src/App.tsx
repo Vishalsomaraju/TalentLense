@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import CandidateDetail from "./pages/CandidateDetail";
 
-export default function App() {
+export default function App(): React.JSX.Element {
   return (
     <Routes>
       <Route path="/" element={<Home />} />

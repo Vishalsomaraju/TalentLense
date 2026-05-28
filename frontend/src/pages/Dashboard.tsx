@@ -1,6 +1,4 @@
-import React from "react";
-
-export default function Dashboard() {
+export default function Dashboard(): JSX.Element {
   return (
     <div className="flex">
       {/* Sidebar will go here */}

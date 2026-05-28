@@ -17,13 +17,13 @@ describe("firestore.rules — security", () => {
   });
 
   it("file exists", () =>
-    expect(fs.existsSync(path.resolve(process.cwd(), "firestore.rules"))).toBe(
+    { expect(fs.existsSync(path.resolve(process.cwd(), "firestore.rules"))).toBe(
       true,
-    ));
+    ); });
   it("has deny-all default rule", () =>
-    expect(rules).toContain("allow read, write: if false"));
+    { expect(rules).toContain("allow read, write: if false"); });
   it("requires auth for writes", () =>
-    expect(rules).toContain("request.auth != null"));
+    { expect(rules).toContain("request.auth != null"); });
   it("uses hasOnlyFields field validation", () =>
-    expect(rules).toContain("hasOnlyFields"));
+    { expect(rules).toContain("hasOnlyFields"); });
 });

@@ -7,25 +7,25 @@ import fs from "fs";
 import path from "path";
 
 const root = path.resolve(process.cwd());
-const read = (f: string) => fs.readFileSync(path.join(root, f), "utf8");
+const read = (f: string): string => fs.readFileSync(path.join(root, f), "utf8");
 
 describe("Environment variable security", () => {
   it(".env.example exists", () =>
-    expect(fs.existsSync(path.join(root, ".env.example"))).toBe(true));
+    { expect(fs.existsSync(path.join(root, ".env.example"))).toBe(true); });
   it(".env.example has VITE_FIREBASE_API_KEY", () =>
-    expect(read(".env.example")).toContain("VITE_FIREBASE_API_KEY="));
+    { expect(read(".env.example")).toContain("VITE_FIREBASE_API_KEY="); });
   it(".env.example has VITE_FIREBASE_PROJECT_ID", () =>
-    expect(read(".env.example")).toContain("VITE_FIREBASE_PROJECT_ID="));
+    { expect(read(".env.example")).toContain("VITE_FIREBASE_PROJECT_ID="); });
   it(".env.example has VITE_GA_MEASUREMENT_ID", () =>
-    expect(read(".env.example")).toContain("VITE_GA_MEASUREMENT_ID="));
+    { expect(read(".env.example")).toContain("VITE_GA_MEASUREMENT_ID="); });
   it(".gitignore excludes .env files", () =>
-    expect(read(".gitignore")).toMatch(/^\.env$/m));
+    { expect(read(".gitignore")).toMatch(/^\.env$/m); });
   it(".gitignore excludes AI tool caches", () =>
-    expect(read(".gitignore")).toContain(".cursor/"));
+    { expect(read(".gitignore")).toContain(".cursor/"); });
   it(".gitignore excludes graphify-out", () =>
-    expect(read(".gitignore")).toContain("graphify-out/"));
+    { expect(read(".gitignore")).toContain("graphify-out/"); });
   it(".gitignore excludes CLAUDE.md", () =>
-    expect(read(".gitignore")).toContain("CLAUDE.md"));
+    { expect(read(".gitignore")).toContain("CLAUDE.md"); });
 });
 
 describe("No raw API keys in source files", () => {

@@ -9,7 +9,7 @@ import fs from "fs";
 import path from "path";
 
 const root = path.resolve(process.cwd());
-const readJson = (file: string) =>
+const readJson = (file: string): unknown =>
   JSON.parse(fs.readFileSync(path.join(root, file), "utf8"));
 
 describe("vercel.json — security headers", () => {
@@ -26,31 +26,31 @@ describe("vercel.json — security headers", () => {
   });
 
   it("file exists", () =>
-    expect(fs.existsSync(path.join(root, "vercel.json"))).toBe(true));
+    { expect(fs.existsSync(path.join(root, "vercel.json"))).toBe(true); });
   it("has SPA rewrite rule", () => {
     const config = readJson("vercel.json") as { rewrites?: unknown[] };
     expect(config.rewrites?.length).toBeGreaterThan(0);
   });
   it("X-Frame-Options is DENY", () =>
-    expect(headers.find((h) => h.key === "X-Frame-Options")?.value).toBe(
+    { expect(headers.find((h) => h.key === "X-Frame-Options")?.value).toBe(
       "DENY",
-    ));
+    ); });
   it("X-Content-Type-Options is nosniff", () =>
-    expect(headers.find((h) => h.key === "X-Content-Type-Options")?.value).toBe(
+    { expect(headers.find((h) => h.key === "X-Content-Type-Options")?.value).toBe(
       "nosniff",
-    ));
+    ); });
   it("Strict-Transport-Security exists", () =>
-    expect(
+    { expect(
       headers.find((h) => h.key === "Strict-Transport-Security")?.value,
-    ).toMatch(/max-age=\d+/));
+    ).toMatch(/max-age=\d+/); });
   it("Content-Security-Policy exists", () =>
-    expect(
+    { expect(
       headers.find((h) => h.key === "Content-Security-Policy")?.value,
-    ).toContain("frame-ancestors 'none'"));
+    ).toContain("frame-ancestors 'none'"); });
   it("Referrer-Policy exists", () =>
-    expect(headers.find((h) => h.key === "Referrer-Policy")).toBeDefined());
+    { expect(headers.find((h) => h.key === "Referrer-Policy")).toBeDefined(); });
   it("Permissions-Policy exists", () =>
-    expect(headers.find((h) => h.key === "Permissions-Policy")).toBeDefined());
+    { expect(headers.find((h) => h.key === "Permissions-Policy")).toBeDefined(); });
   it("sw.js route has no-cache header", () => {
     const config = readJson("vercel.json") as {
       headers: Array<{

@@ -15,25 +15,25 @@ describe("index.html accessibility", () => {
   });
 
   it("html element has lang attribute", () =>
-    expect(html).toMatch(/<html[^>]+lang=/));
-  it("has meta viewport", () => expect(html).toContain('name="viewport"'));
-  it("has title element", () => expect(html).toMatch(/<title>[^<]+<\/title>/));
+    { expect(html).toMatch(/<html[^>]+lang=/); });
+  it("has meta viewport", () => { expect(html).toContain('name="viewport"'); });
+  it("has title element", () => { expect(html).toMatch(/<title>[^<]+<\/title>/); });
   it("has skip-to-content link", () =>
-    expect(html).toMatch(/Skip to main content/i));
+    { expect(html).toMatch(/Skip to main content/i); });
   it("skip link points to #main-content", () =>
-    expect(html).toContain('href="#main-content"'));
+    { expect(html).toContain('href="#main-content"'); });
   it("skip link has sr-only class", () =>
-    expect(html).toContain('class="sr-only"'));
+    { expect(html).toContain('class="sr-only"'); });
   it("has Google Fonts via link (not @import)", () =>
-    expect(html).toMatch(/fonts\.googleapis\.com/));
+    { expect(html).toMatch(/fonts\.googleapis\.com/); });
   it("has link rel=manifest for PWA", () =>
-    expect(html).toContain('rel="manifest"'));
+    { expect(html).toContain('rel="manifest"'); });
   it("has service worker registration script", () =>
-    expect(html).toContain("serviceWorker"));
+    { expect(html).toContain("serviceWorker"); });
   it("has meta description", () =>
-    expect(html).toContain('name="description"'));
+    { expect(html).toContain('name="description"'); });
   it("has theme-color meta", () =>
-    expect(html).toContain('name="theme-color"'));
+    { expect(html).toContain('name="theme-color"'); });
 });
 
 describe("index.css accessibility rules", () => {
@@ -44,10 +44,10 @@ describe("index.css accessibility rules", () => {
   });
 
   it("has prefers-reduced-motion media query", () =>
-    expect(css).toContain("prefers-reduced-motion"));
+    { expect(css).toContain("prefers-reduced-motion"); });
   it("has prefers-contrast media query", () =>
-    expect(css).toContain("prefers-contrast"));
-  it("has .sr-only utility class", () => expect(css).toContain(".sr-only"));
+    { expect(css).toContain("prefers-contrast"); });
+  it("has .sr-only utility class", () => { expect(css).toContain(".sr-only"); });
   it("has :focus-visible styles", () =>
-    expect(css).toContain(":focus-visible"));
+    { expect(css).toContain(":focus-visible"); });
 });

@@ -46,7 +46,7 @@ export function useAsync<T>(): UseAsyncReturn<T> {
     [],
   );
 
-  const reset = useCallback(() => setState(INITIAL as AsyncState<T>), []);
+  const reset = useCallback(() => { setState(INITIAL); }, []);
 
   return { ...state, execute, reset };
 }
