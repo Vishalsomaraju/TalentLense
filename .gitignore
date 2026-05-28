@@ -1,0 +1,83 @@
+# ── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Build outputs ──────────────────────────────────────────────────────────────
+dist/
+dist-ssr/
+build/
+out/
+
+# ── Environment variables ─────────────────────────────────────────────────────
+# NEVER commit real secrets. .env.example is the only safe env file.
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ── Debug output — NEVER commit these (cost points in PromptWars) ─────────────
+cov.txt
+lint-results.txt
+gemini-test-output.txt
+*.output.txt
+*.debug.txt
+
+# ── Testing & Coverage ────────────────────────────────────────────────────────
+coverage/
+playwright-report/
+test-results/
+.nyc_output/
+
+# ── AI Tool Configurations ────────────────────────────────────────────────────
+# These reveal tooling and add junk files the evaluator penalizes
+graphify-out/
+.claude/
+CLAUDE.md
+.aider*
+.continue/
+.copilot/
+.cursor/
+.cline/
+.cline_storage/
+*.session.json
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Firebase ──────────────────────────────────────────────────────────────────
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.firebaserc
+
+# ── TypeScript ────────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ── Draft / Personal files — common submission mistakes ───────────────────────
+linkedin_post.md
+draft_*.md
+notes_*.md
+todo_*.md
+pre_submission_audit.md
+
+# ── Terraform ─────────────────────────────────────────────────────────────────
+*.tfstate
+*.tfstate.*
+.terraform/

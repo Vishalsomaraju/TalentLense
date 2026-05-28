@@ -1,0 +1,1070 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentLens — Predictive Hiring Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:             #090a0d;
+      --surface:         #0e0f13;
+      --surface2:        #13141a;
+      --surface3:        #191b22;
+      --border:          #1d1f2a;
+      --border-hi:       #252838;
+      --parchment:       #ddd0c0;
+      --parchment-dim:   #a89a8a;
+      --parchment-muted: #6b5f54;
+      --sage:            #8dba85;
+      --sand:            #b89a6e;
+      --rose:            #b88a8a;
+      --sky:             #7aa8c0;
+      --text-primary:    #e8eaf0;
+      --text-secondary:  #7a8394;
+      --text-muted:      #3e4454;
+      --font-sans:       "Geist", system-ui, sans-serif;
+      --font-mono:       "Geist Mono", "JetBrains Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--ink);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Noise Layer - Moved behind content and refined intensity */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-attachment: fixed;
+      opacity: 0.012;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    /* Grid Layer */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 60%, black 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 60%, black 100%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Ambient Radial */
+    .ambient-glow {
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse at center,
+        rgba(141,186,133,0.045) 0%,
+        rgba(184,154,110,0.03) 40%,
+        transparent 72%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    nav {
+      height: 52px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(9,10,13,0.82);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 48px;
+      z-index: 1000;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--parchment);
+      border-radius: 50%;
+    }
+
+    .nav-brand {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--parchment);
+      text-decoration: none;
+    }
+
+    .nav-center {
+      display: flex;
+      gap: 32px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .nav-link {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 150ms ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-signin {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 150ms ease;
+    }
+
+    .nav-signin:hover {
+      color: var(--text-primary);
+    }
+
+    .btn-access {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--parchment);
+      color: var(--ink);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 160ms ease, filter 160ms ease;
+    }
+
+    .btn-access:hover {
+      transform: scale(1.02);
+      filter: brightness(0.94);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      padding: 140px 48px 80px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 80px;
+      align-items: center;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .kicker {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: var(--parchment-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(-8px);
+      animation: fadeInDown 400ms ease forwards;
+    }
+
+    .kicker-square {
+      width: 6px;
+      height: 6px;
+      background: var(--sage);
+    }
+
+    .headline {
+      margin-top: 16px;
+      max-width: 580px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 560ms 80ms ease-out forwards;
+    }
+
+    .headline span {
+      display: block;
+      font-size: clamp(44px, 5vw, 68px);
+      font-weight: 300;
+      letter-spacing: -0.055em;
+      line-height: 0.95;
+    }
+
+    .line-1 { color: var(--text-primary); }
+    .line-2 { color: var(--parchment); font-style: italic; }
+
+    .subhead {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      max-width: 44ch;
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeIn 500ms 200ms ease forwards;
+    }
+
+    .cta-row {
+      margin-top: 32px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 500ms 320ms ease forwards;
+    }
+
+    .btn-primary {
+      background: var(--parchment);
+      color: var(--ink);
+      border: none;
+      border-radius: 10px;
+      padding: 13px 22px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      background: #e8ddd0;
+    }
+
+    .btn-primary:active {
+      transform: translateY(0px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--parchment-dim);
+      border: 1px solid var(--border-hi);
+      border-radius: 10px;
+      padding: 13px 22px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 160ms ease, color 160ms ease;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--parchment-muted);
+      color: var(--parchment);
+    }
+
+    .social-proof {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      animation: fadeIn 500ms 480ms ease forwards;
+    }
+
+    .avatars {
+      display: flex;
+    }
+
+    .avatar-circle {
+      width: 28px;
+      height: 28px;
+      background: var(--surface3);
+      border: 1px solid var(--border-hi);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--parchment-muted);
+      margin-left: -8px;
+    }
+
+    .avatar-circle:first-child { margin-left: 0; }
+
+    .divider-v {
+      width: 1px;
+      height: 20px;
+      background: var(--border-hi);
+    }
+
+    .proof-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stars {
+      color: var(--sand);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    /* Live Panel Card */
+    .live-panel {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      opacity: 0;
+      transform: scale(0.96);
+      animation: panelEnter 640ms 120ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .panel-header {
+      height: 44px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .dot-blink {
+      width: 6px;
+      height: 6px;
+      background: var(--sage);
+      border-radius: 50%;
+      animation: blink 2.2s infinite;
+    }
+
+    .header-stat {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .panel-tabs {
+      height: 36px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+    }
+
+    .tab {
+      padding: 0 16px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-bottom: 1px solid transparent;
+      transition: color 150ms ease;
+    }
+
+    .tab.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--parchment);
+    }
+
+    .tab-content {
+      padding: 14px 16px;
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Rankings Table */
+    .candidate-row {
+      height: 48px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+
+    .candidate-row:last-child { border-bottom: none; }
+
+    .rank-num {
+      width: 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--parchment-muted);
+    }
+
+    .avatar-sm {
+      width: 26px;
+      height: 26px;
+      background: var(--surface3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: var(--parchment);
+      margin: 0 10px;
+    }
+
+    .ident {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .ident-name { font-size: 13px; color: var(--text-primary); font-weight: 400; }
+    .ident-role { font-size: 10px; color: var(--text-secondary); }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .score-val {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 300;
+    }
+
+    .score-sage { color: var(--sage); }
+    .score-sand { color: var(--sand); }
+    .score-rose { color: var(--rose); }
+
+    .mini-bar-track {
+      width: 48px;
+      height: 3px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      transition: width 700ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Signals View */
+    .signal-row {
+      margin-bottom: 16px;
+    }
+
+    .signal-label-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .signal-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+    .signal-val { font-family: var(--font-mono); font-size: 12px; color: var(--parchment-muted); }
+
+    .bar-track {
+      width: 100%;
+      height: 5px;
+      background: var(--border);
+      border-radius: 999px;
+      margin-bottom: 4px;
+    }
+
+    .bar-fill { height: 100%; width: 0; border-radius: 999px; }
+    .fill-sage { background: var(--sage); }
+    .fill-sand { background: var(--sand); }
+
+    .signal-desc { font-size: 10px; color: var(--text-muted); font-style: italic; }
+
+    /* Insights View */
+    .insight-bullet {
+      background: var(--surface3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 8px;
+    }
+
+    .bullet-prefix { color: var(--parchment-muted); flex-shrink: 0; }
+
+    /* Card Footer */
+    .panel-footer {
+      padding: 14px 16px;
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+    
+    .confidence-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .conf-bar-track { width: 120px; height: 4px; background: var(--border); border-radius: 999px; }
+    .conf-bar-fill { width: 84%; height: 100%; background: var(--sage); border-radius: 999px; }
+    .conf-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+
+    /* Signal Strip Section */
+    .signal-strip-section {
+      padding: 0 48px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-kicker {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: var(--parchment-muted);
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--text-primary);
+      letter-spacing: -0.04em;
+      margin-top: 4px;
+    }
+
+    .section-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 52ch;
+      margin-top: 8px;
+    }
+
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+
+    .signal-cell {
+      padding: 24px;
+      background: var(--surface);
+      transition: background 180ms ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .signal-cell:hover {
+      background: var(--surface2);
+    }
+
+    .cell-icon {
+      font-size: 24px;
+      color: var(--parchment-muted);
+    }
+
+    .cell-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-top: 12px;
+    }
+
+    .cell-body {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-top: 8px;
+      flex-grow: 1;
+    }
+
+    .cell-pill {
+      margin-top: 16px;
+      align-self: flex-start;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      color: var(--parchment-muted);
+    }
+
+    /* Comparison Table Section */
+    .comparison-section {
+      padding: 80px 48px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .comp-title {
+      font-size: 30px;
+      font-weight: 300;
+      color: var(--text-primary);
+    }
+
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 28px;
+    }
+
+    .comp-table th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comp-table td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .comp-table tr:last-child td { border-bottom: none; }
+
+    .feat-name { color: var(--text-secondary); }
+    . ATS-val { color: var(--text-muted); }
+    .TL-val { color: var(--text-primary); font-weight: 500; }
+
+    .check-sage { color: var(--sage); }
+    .cross-rose { color: var(--rose); }
+
+    .alt-row { background: rgba(255,255,255,0.012); }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes panelEnter {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 100px;
+        text-align: center;
+        justify-items: center;
+      }
+      .kicker { justify-content: center; }
+      .headline { max-width: none; }
+      .cta-row { justify-content: center; }
+      .social-proof { justify-content: center; }
+      .subhead { margin-left: auto; margin-right: auto; }
+      .live-panel { width: 100%; max-width: 420px; }
+      .signal-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-center { display: none; }
+      .hero { padding: 100px 24px 60px; gap: 40px; }
+      .signal-strip-section { padding: 0 24px 60px; }
+      .signal-grid { grid-template-columns: 1fr; }
+      .comparison-section { padding: 60px 24px; }
+      .comp-table th:nth-child(2), .comp-table td:nth-child(2) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow"></div>
+
+  <nav>
+    <div class="nav-left">
+      <div class="nav-dot"></div>
+      <a href="#" class="nav-brand">TalentLens</a>
+    </div>
+    <div class="nav-center">
+      <a href="#" class="nav-link">Product</a>
+      <a href="#" class="nav-link">Pricing</a>
+      <a href="#" class="nav-link">Docs</a>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="nav-signin">Sign in</a>
+      <button class="btn-access">REQUEST ACCESS</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="kicker">
+        <div class="kicker-square"></div>
+        PREDICTIVE HIRING INTELLIGENCE
+      </div>
+      <h1 class="headline">
+        <span class="line-1">Understand candidates</span>
+        <span class="line-2">before you meet them.</span>
+      </h1>
+      <p class="subhead">
+        TalentLens evaluates the 24 behavioral, semantic, and trajectory signals 
+        that predict on-the-job performance — not just keyword overlap.
+      </p>
+      <div class="cta-row">
+        <button class="btn-primary" onclick="window.location.href='index.html'">Start analyzing →</button>
+        <button class="btn-ghost">Watch demo</button>
+      </div>
+      <div class="social-proof">
+        <div class="avatars">
+          <div class="avatar-circle">AR</div>
+          <div class="avatar-circle">PM</div>
+          <div class="avatar-circle">RI</div>
+          <div class="avatar-circle">SK</div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="proof-content">
+          <div class="proof-text">Trusted by 140+ hiring teams</div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="live-panel">
+        <div class="panel-header">
+          <div class="live-indicator">
+            <div class="dot-blink"></div>
+            LIVE ANALYSIS
+          </div>
+          <div class="header-stat">24 candidates · 4 signals</div>
+        </div>
+        <div class="panel-tabs">
+          <div class="tab active" data-tab="rankings">Rankings</div>
+          <div class="tab" data-tab="signals">Signals</div>
+          <div class="tab" data-tab="insights">Insights</div>
+        </div>
+
+        <!-- Rankings Tab -->
+        <div id="tab-rankings" class="tab-content active">
+          <div class="candidate-row">
+            <div class="rank-num">01</div>
+            <div class="avatar-sm">AR</div>
+            <div class="ident">
+              <span class="ident-name">Aditya Rao</span>
+              <span class="ident-role">Sr ML Engineer</span>
+            </div>
+            <div class="score-block">
+              <span class="score-val score-sage">91</span>
+              <div class="mini-bar-track"><div class="mini-bar-fill fill-sage" data-width="91%"></div></div>
+            </div>
+          </div>
+          <div class="candidate-row">
+            <div class="rank-num">02</div>
+            <div class="avatar-sm">SK</div>
+            <div class="ident">
+              <span class="ident-name">Sanya Kapoor</span>
+              <span class="ident-role">ML Ops</span>
+            </div>
+            <div class="score-block">
+              <span class="score-val score-sand">84</span>
+              <div class="mini-bar-track"><div class="mini-bar-fill fill-sand" data-width="84%"></div></div>
+            </div>
+          </div>
+          <div class="candidate-row">
+            <div class="rank-num">03</div>
+            <div class="avatar-sm">PM</div>
+            <div class="ident">
+              <span class="ident-name">Priya Mehta</span>
+              <span class="ident-role">Data Scientist</span>
+            </div>
+            <div class="score-block">
+              <span class="score-val score-sand">78</span>
+              <div class="mini-bar-track"><div class="mini-bar-fill fill-sand" data-width="78%"></div></div>
+            </div>
+          </div>
+          <div class="candidate-row">
+            <div class="rank-num">04</div>
+            <div class="avatar-sm">RI</div>
+            <div class="ident">
+              <span class="ident-name">Rohan Iyer</span>
+              <span class="ident-role">AI Researcher</span>
+            </div>
+            <div class="score-block">
+              <span class="score-val score-rose">61</span>
+              <div class="mini-bar-track"><div class="mini-bar-fill fill-rose" data-width="61%"></div></div>
+            </div>
+          </div>
+          <div class="candidate-row">
+            <div class="rank-num">05</div>
+            <div class="avatar-sm">AJ</div>
+            <div class="ident">
+              <span class="ident-name">Arjun Joshi</span>
+              <span class="ident-role">NLP Engineer</span>
+            </div>
+            <div class="score-block">
+              <span class="score-val score-rose">55</span>
+              <div class="mini-bar-track"><div class="mini-bar-fill fill-rose" data-width="55%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signals Tab -->
+        <div id="tab-signals" class="tab-content">
+          <div class="signal-row">
+            <div class="signal-label-row">
+              <span class="signal-label">Semantic Match</span>
+              <span class="signal-val">94</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill fill-sage" data-width="94%"></div></div>
+            <div class="signal-desc">High conceptual alignment with role requirements</div>
+          </div>
+          <div class="signal-row">
+            <div class="signal-label-row">
+              <span class="signal-label">Career Trajectory</span>
+              <span class="signal-val">88</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill fill-sage" data-width="88%"></div></div>
+            <div class="signal-desc">Consistent vertical growth in specialized domains</div>
+          </div>
+          <div class="signal-row">
+            <div class="signal-label-row">
+              <span class="signal-label">Project Impact</span>
+              <span class="signal-val">82</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill fill-sand" data-width="82%"></div></div>
+            <div class="signal-desc">Strong evidence of shipping production-scale systems</div>
+          </div>
+          <div class="signal-row">
+            <div class="signal-label-row">
+              <span class="signal-label">Learning Velocity</span>
+              <span class="signal-val">64</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill fill-sand" data-width="64%"></div></div>
+            <div class="signal-desc">Average pace of multi-stack skill acquisition</div>
+          </div>
+        </div>
+
+        <!-- Insights Tab -->
+        <div id="tab-insights" class="tab-content">
+          <div class="insight-bullet">
+            <span class="bullet-prefix">›</span>
+            Strong PyTorch depth with production deployment experience across 3 companies.
+          </div>
+          <div class="insight-bullet">
+            <span class="bullet-prefix">›</span>
+            Career arc shows deliberate ML platform specialization — not generalist drift.
+          </div>
+          <div class="insight-bullet">
+            <span class="bullet-prefix">›</span>
+            GitHub signal: 12 repos, 4 with >50 stars. Consistent commit cadence.
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <div class="footer-label">Model confidence: High</div>
+          <div class="confidence-wrap">
+            <div class="conf-bar-track"><div class="conf-bar-fill"></div></div>
+            <span class="conf-pct">84%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="signal-strip-section">
+    <div class="signal-strip-header">
+      <div class="section-kicker">HOW IT WORKS</div>
+      <h2 class="section-title">Four signals. One confident ranking.</h2>
+      <p class="section-desc">Each signal is independently computed. The model combines them with learned weights per role type.</p>
+    </div>
+
+    <div class="signal-grid">
+      <div class="signal-cell">
+        <div class="cell-icon">◈</div>
+        <div class="cell-title">Semantic Match</div>
+        <p class="cell-body">Evaluates concept alignment between candidate history and role requirements — beyond keyword overlap.</p>
+        <div class="cell-pill">Avg 81/100</div>
+      </div>
+      <div class="signal-cell">
+        <div class="cell-icon">↗</div>
+        <div class="cell-title">Career Trajectory</div>
+        <p class="cell-body">Models the arc and velocity of career growth, identifying deliberate specialization vs. lateral drift.</p>
+        <div class="cell-pill">5yr window</div>
+      </div>
+      <div class="signal-cell">
+        <div class="cell-icon">◎</div>
+        <div class="cell-title">Project Impact</div>
+        <p class="cell-body">Extracts outcomes from project descriptions — shipped products, measured results, team scope.</p>
+        <div class="cell-pill">GitHub + text</div>
+      </div>
+      <div class="signal-cell">
+        <div class="cell-icon">△</div>
+        <div class="cell-title">Learning Velocity</div>
+        <p class="cell-body">Detects skill acquisition speed from temporal markers across a candidate's complete history.</p>
+        <div class="cell-pill">Temporal model</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="comparison-section">
+    <div class="comparison-container">
+      <h2 class="comp-title">Why teams switch to TalentLens</h2>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Traditional ATS</th>
+            <th>TalentLens</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feat-name">Candidate ranking depth</td>
+            <td class="ATS-val">Keyword match only</td>
+            <td class="TL-val">24-signal composite score</td>
+          </tr>
+          <tr class="alt-row">
+            <td class="feat-name">Explainability</td>
+            <td class="ATS-val"><span class="cross-rose">✗</span> None</td>
+            <td class="TL-val"><span class="check-sage">✓</span> Per-candidate AI reasoning</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Career trajectory</td>
+            <td class="ATS-val"><span class="cross-rose">✗</span> Not analyzed</td>
+            <td class="TL-val"><span class="check-sage">✓</span> 5-year arc model</td>
+          </tr>
+          <tr class="alt-row">
+            <td class="feat-name">Skill adjacency</td>
+            <td class="ATS-val">Exact match</td>
+            <td class="TL-val">Semantic + vector similarity</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Project impact</td>
+            <td class="ATS-val"><span class="cross-rose">✗</span> Ignored</td>
+            <td class="TL-val">Extracted and weighted</td>
+          </tr>
+          <tr class="alt-row">
+            <td class="feat-name">Learning velocity</td>
+            <td class="ATS-val"><span class="cross-rose">✗</span> Not measured</td>
+            <td class="TL-val">Temporal acquisition model</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Bias indicators</td>
+            <td class="ATS-val"><span class="cross-rose">✗</span> None</td>
+            <td class="TL-val">Fairness flags per signal</td>
+          </tr>
+          <tr class="alt-row">
+            <td class="feat-name">Integration</td>
+            <td class="ATS-val">CSV export</td>
+            <td class="TL-val">API + ATS webhooks</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab');
+        
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        contents.forEach(content => {
+          content.classList.remove('active');
+          if (content.id === `tab-${target}`) {
+            content.classList.add('active');
+            // Trigger bar animation on switch
+            animateBars(content);
+          }
+        });
+      });
+    });
+
+    // Bar animation function
+    function animateBars(container) {
+      const bars = container.querySelectorAll('.mini-bar-fill, .bar-fill');
+      bars.forEach((bar, index) => {
+        const width = bar.getAttribute('data-width');
+        setTimeout(() => {
+          bar.style.width = width;
+        }, index * 60);
+      });
+    }
+
+    // Initial animation on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const activeContent = document.querySelector('.tab-content.active');
+      animateBars(activeContent);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentLens — Project Launcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:             #090a0d;
+      --surface:         #0e0f13;
+      --surface2:        #13141a;
+      --border:          #1d1f2a;
+      --parchment:       #ddd0c0;
+      --text-primary:    #e8eaf0;
+      --text-secondary:  #7a8394;
+      --text-muted:      #3e4454;
+    }
+
+    body {
+      background-color: var(--ink);
+      color: var(--text-primary);
+      font-family: "Geist", system-ui, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    .launcher-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 800px;
+      padding: 48px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--parchment);
+      border-radius: 50%;
+    }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--parchment);
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 300;
+      margin-bottom: 12px;
+      letter-spacing: -0.04em;
+    }
+
+    p.desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 44ch;
+    }
+
+    .screen-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .screen-link {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-decoration: none;
+      transition: all 200ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .screen-link:hover {
+      border-color: var(--parchment);
+      transform: translateY(-2px);
+    }
+
+    .screen-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--parchment);
+    }
+
+    .screen-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .tag {
+      font-family: "Geist Mono", monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 640px) {
+      .screen-grid {
+        grid-template-columns: 1fr;
+      }
+      .launcher-card {
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="launcher-card">
+    <div class="brand-mark">
+      <div class="brand-dot"></div>
+      <div class="brand-name">TalentLens</div>
+    </div>
+
+    <h1>High-Fidelity Prototypes</h1>
+    <p class="desc">A complete suite of AI-powered hiring surfaces redesigned for the TalentLens hackathon submission.</p>
+
+    <div class="screen-grid">
+      <a href="marketing-hero.html" class="screen-link">
+        <span class="tag">Marketing</span>
+        <span class="screen-title">The Hero Landing →</span>
+        <span class="screen-desc">Funded B2B presence with Linear-style grid and live analysis preview.</span>
+      </a>
+
+      <a href="home-preview.html" class="screen-link">
+        <span class="tag">Product</span>
+        <span class="screen-title">JD Analysis Entry →</span>
+        <span class="screen-desc">Two-zone hero composition for job description predictive analysis.</span>
+      </a>
+
+      <a href="dashboard-preview.html" class="screen-link">
+        <span class="tag">Product</span>
+        <span class="screen-title">Enterprise Dashboard →</span>
+        <span class="screen-desc">Dense information-rich view with metric strips and reasoning drawer.</span>
+      </a>
+
+      <a href="candidate-detail.html" class="screen-link">
+        <span class="tag">Product</span>
+        <span class="screen-title">Analytical Profile →</span>
+        <span class="screen-desc">Deep-dive candidate profile with skill graphs and career trajectory.</span>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

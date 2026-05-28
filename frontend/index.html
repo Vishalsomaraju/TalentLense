@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="__APP_DESCRIPTION__" />
+    <meta name="theme-color" content="#4F46E5" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Favicon — inline SVG emoji, zero extra assets -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>__EMOJI__</text></svg>"
+    />
+
+    <!--
+      Google Fonts — loaded via <link> not CSS @import.
+      <link> with preconnect is non-blocking; @import blocks rendering.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>__APP_NAME__</title>
+  </head>
+  <body>
+    <!--
+      Skip navigation link — MUST be the first interactive element.
+      Hidden visually but revealed on keyboard focus via .sr-only:focus.
+      Required: WCAG 2.1 SC 2.4.1 Bypass Blocks.
+    -->
+    <a href="#main-content" class="sr-only">
+      Skip to main content
+    </a>
+
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!--
+      Service Worker — registered after page load so it never blocks
+      the initial paint. Enables offline support and fast repeat loads.
+    -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch((err) => {
+            console.warn('[SW] Registration failed:', err);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

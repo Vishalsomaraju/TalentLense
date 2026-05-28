@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TalentLens - Analytical Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #0a0b0e; 
+  --surface: #0f1014; 
+  --surface2: #141519; 
+  --surface3: #1a1b21;
+  --border: #1e2029; 
+  --border-hi: #252733; 
+  --parchment: #ddd0c0; 
+  --parchment-dim: #a89a8a;
+  --parchment-muted: #6b5f54; 
+  --sage: #8dba85; 
+  --sand: #b89a6e; 
+  --rose: #b88a8a;
+  --sky: #7aa8c0; 
+  --text-primary: #e8eaf0; 
+  --text-secondary: #7a8394; 
+  --text-muted: #3e4454;
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--ink);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  font-size: 13px;
+  line-height: 1.5;
+}
+button { font-family: inherit; }
+
+/* LAYOUT */
+.top-nav {
+  position: fixed; top: 0; left: 0; width: 100%; height: 48px;
+  background: rgba(9,10,13,0.9);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 100;
+}
+.left-sidebar {
+  position: fixed; top: 48px; left: 0; width: 200px; height: calc(100vh - 48px);
+  background: var(--surface); border-right: 1px solid var(--border);
+  overflow-y: auto; padding: 16px 0;
+  z-index: 90;
+}
+.main-content {
+  margin-left: 200px; margin-top: 48px; padding: 20px 24px;
+}
+
+/* TOP NAV ZONES */
+.nav-left { width: 200px; display: flex; align-items: center; padding-left: 16px; gap: 8px; }
+.brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--parchment); }
+.brand-text { font-size: 15px; font-weight: 500; color: var(--parchment); }
+
+.nav-center { flex: 1; display: flex; justify-content: center; }
+.search-wrapper { position: relative; width: 100%; max-width: 480px; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+.search-input {
+  width: 100%; height: 32px; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0 12px 0 32px; font: 12px var(--font-sans); color: var(--text-primary);
+  outline: none; transition: border-color 150ms;
+}
+.search-input::placeholder { color: var(--text-muted); }
+.search-input:focus { border-color: var(--border-hi); }
+
+.nav-right { display: flex; align-items: center; padding-right: 16px; }
+.btn-refresh { 
+  background: none; border: none; color: var(--text-secondary); font-size: 12px;
+  cursor: pointer; margin-right: 16px;
+}
+.notification-bell { position: relative; margin-right: 16px; font-size: 14px; cursor: pointer; color: var(--text-secondary); }
+.notification-dot { 
+  position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; 
+  background: var(--rose); border-radius: 50%; border: 1px solid rgba(9,10,13,0.9);
+}
+.user-avatar { 
+  width: 28px; height: 28px; border-radius: 50%; background: var(--surface3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--parchment); font-weight: 500; cursor: pointer;
+}
+
+/* LEFT SIDEBAR */
+.sidebar-section-label {
+  font-family: var(--font-mono); font-size: 9px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.18em; padding: 0 16px; margin-bottom: 8px;
+}
+.nav-item {
+  height: 34px; padding: 0 16px; display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: background 120ms, color 120ms;
+  border-left: 2px solid transparent; padding-left: 14px; /* compensate for border */
+}
+.nav-item:hover { background: var(--surface2); color: var(--text-primary); }
+.nav-item.active { background: var(--surface2); color: var(--text-primary); border-left-color: var(--parchment); padding-left: 14px; }
+.sidebar-divider { height: 1px; background: var(--border); margin: 16px; }
+.mini-stat-box {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+  margin: 0 12px; padding: 12px;
+}
+.stat-row-1 { display: flex; justify-content: space-between; font: 9px var(--font-mono); }
+.stat-row-1 .lbl { color: var(--text-muted); }
+.stat-row-1 .val { color: var(--parchment-muted); }
+.stat-row-2 { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; }
+.stat-row-2 .lbl { font: 9px var(--font-mono); color: var(--text-muted); }
+.stat-row-2 .val { font: 300 14px var(--font-mono); color: var(--parchment); }
+.stat-row-3 { display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+.blinking-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--sage); animation: blink 2s infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.stat-row-3 .lbl { font: 9px var(--font-mono); color: var(--sage); }
+
+/* METRIC STRIP */
+.metric-strip {
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  display: grid; grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;
+}
+.metric-tile { padding: 16px 20px; background: var(--surface); border-right: 1px solid var(--border); }
+.metric-tile:last-child { border-right: none; }
+.metric-label { font: 9px var(--font-mono); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; }
+.metric-val { font: 300 28px var(--font-mono); color: var(--parchment); margin: 4px 0; line-height: 1.1; }
+.metric-delta { font: 10px var(--font-mono); }
+.delta-pos { color: var(--sage); }
+.delta-neg { color: var(--rose); }
+.delta-neu { color: var(--text-muted); }
+
+/* TWO-COLUMN LAYOUT */
+.dashboard-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; }
+
+/* MAIN COLUMN (LEFT) */
+.toolbar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.toolbar-left { display: flex; align-items: center; gap: 6px; }
+.toolbar-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.toolbar-count { font-size: 14px; color: var(--text-muted); }
+
+.toolbar-right { display: flex; align-items: center; gap: 12px; }
+.sort-select {
+  font: 12px var(--font-sans); background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text-secondary); border-radius: 6px; padding: 5px 10px; outline: none; cursor: pointer;
+}
+.view-toggles { display: flex; gap: 4px; }
+.view-btn {
+  width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent;
+  color: var(--text-secondary); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.view-btn.active { background: var(--border-hi); color: var(--text-primary); }
+
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.filter-chip {
+  font: 11px var(--font-mono); color: var(--text-secondary); padding: 5px 12px;
+  border: 1px solid var(--border); border-radius: 999px; background: var(--surface2);
+  cursor: pointer; transition: 120ms; display: flex; align-items: center; gap: 4px;
+}
+.filter-chip:hover { border-color: var(--border-hi); }
+.filter-chip.active { background: var(--surface3); border-color: var(--parchment-muted); color: var(--parchment-dim); }
+
+/* CANDIDATE LIST */
+.candidate-list-wrapper { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.list-header {
+  height: 40px; background: var(--surface2); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 16px; gap: 12px;
+}
+.header-col { font: 9px var(--font-mono); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; }
+.col-rank { width: 28px; text-align: right; }
+.col-candidate { flex: 1; }
+.col-score { width: 68px; text-align: right; }
+.col-signals { width: 120px; }
+.col-skills { width: 140px; }
+.col-stage { width: 80px; }
+.col-action { width: 32px; text-align: center; }
+
+.candidate-row {
+  height: 56px; display: flex; align-items: center; padding: 0 16px; gap: 12px;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+  cursor: pointer; transition: background 120ms;
+}
+.candidate-row:last-child { border-bottom: none; }
+.candidate-row:hover { background: var(--surface2); }
+
+.row-rank { width: 28px; text-align: right; font: 300 13px var(--font-mono); color: var(--parchment-muted); }
+.row-candidate { flex: 1; display: flex; align-items: center; gap: 10px; overflow: hidden; }
+.cand-avatar { width: 30px; height: 30px; min-width: 30px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--parchment); }
+.cand-info { display: flex; flex-direction: column; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.cand-name { font: 500 13px var(--font-sans); color: var(--text-primary); }
+.cand-role { font: 11px var(--font-sans); color: var(--text-secondary); }
+
+.row-score { width: 68px; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.score-val { font: 300 20px var(--font-mono); line-height: 1; }
+.score-val.sage { color: var(--sage); }
+.score-val.sand { color: var(--sand); }
+.score-val.rose { color: var(--rose); }
+.score-bar-bg { width: 48px; height: 3px; background: var(--surface3); border-radius: 999px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 999px; width: 0; transition: width 700ms ease; }
+.score-bar-fill.sage { background: var(--sage); }
+.score-bar-fill.sand { background: var(--sand); }
+.score-bar-fill.rose { background: var(--rose); }
+
+.row-signals { width: 120px; display: flex; gap: 4px; align-items: center; }
+.signal-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--surface3); }
+.signal-dot::after { content: ''; position: absolute; bottom:0; left:0; right:0; background: inherit; border-radius: 50%; }
+.signal-dot.f-100 { background: var(--sage); }
+.signal-dot.f-75 { background: var(--sand); opacity: 0.9; }
+.signal-dot.f-50 { background: var(--sand); opacity: 0.5; }
+.signal-dot.f-25 { background: var(--rose); opacity: 0.6; }
+
+.signal-dot-wrapper { position: relative; display: inline-flex; }
+.signal-dot-wrapper:hover::before {
+  content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  margin-bottom: 4px; background: var(--surface3); border: 1px solid var(--border-hi);
+  padding: 4px 8px; font: 10px var(--font-sans); color: var(--text-secondary); border-radius: 4px;
+  white-space: nowrap; pointer-events: none; z-index: 10;
+}
+
+.row-skills { width: 140px; display: flex; gap: 4px; flex-wrap: wrap; }
+.skill-pill { font: 10px var(--font-mono); background: var(--surface3); border: 1px solid var(--border); padding: 2px 8px; border-radius: 999px; color: var(--parchment-muted); white-space: nowrap; }
+
+.row-stage { width: 80px; }
+.stage-badge { font: 10px var(--font-mono); padding: 3px 8px; border-radius: 999px; border: 1px solid transparent; display: inline-block; text-align: center; }
+.stage-badge.screening { border-color: var(--border-hi); color: var(--text-secondary); background: var(--surface3); }
+.stage-badge.interview { border-color: var(--sand); color: var(--sand); background: var(--surface3); }
+.stage-badge.shortlisted { border-color: var(--sage); color: var(--sage); background: var(--surface3); }
+
+.row-action { width: 32px; text-align: center; color: var(--text-muted); font-size: 16px; line-height: 1; transition: color 120ms; }
+.candidate-row:hover .row-action { color: var(--text-primary); }
+
+.pagination-strip {
+  height: 40px; background: var(--surface2); border-top: 1px solid var(--border);
+  padding: 0 16px; display: flex; justify-content: space-between; align-items: center;
+}
+.pagination-info { font: 11px var(--font-mono); color: var(--text-muted); }
+.pagination-controls { display: flex; gap: 8px; }
+.btn-page {
+  background: transparent; border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text-secondary); font: 11px var(--font-sans); padding: 4px 12px;
+  cursor: pointer; transition: 120ms;
+}
+.btn-page:hover { border-color: var(--border-hi); color: var(--text-primary); }
+
+
+/* RIGHT SIDEBAR COLUMN */
+.panel-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.panel-card:last-child { margin-bottom: 0; }
+.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.panel-title { font: 9px var(--font-mono); color: var(--text-muted); text-transform: uppercase; }
+.panel-meta { font: 9px var(--font-mono); color: var(--text-muted); }
+.panel-divider { height: 1px; background: var(--border); margin-bottom: 8px; }
+
+.summary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.summary-row:last-child { border-bottom: none; }
+.summary-lbl { font: 11px var(--font-sans); color: var(--text-secondary); }
+.summary-val { font: 11px var(--font-mono); color: var(--parchment-muted); text-align: right; }
+
+.dist-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.dist-row:last-child { margin-bottom: 0; }
+.dist-lbl { font: 10px var(--font-mono); color: var(--text-muted); width: 36px; }
+.dist-bar-wrapper { flex: 1; height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+.dist-bar-fill { height: 100%; border-radius: 999px; width: 0; transition: width 700ms ease; }
+.dist-count { font: 10px var(--font-mono); color: var(--parchment-muted); width: 12px; text-align: right; }
+
+.gap-row { margin-bottom: 12px; }
+.gap-row:last-child { margin-bottom: 0; }
+.gap-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.gap-title { font: 11px var(--font-sans); color: var(--text-primary); }
+.gap-meta { font: 11px var(--font-mono); }
+.gap-bar-wrapper { height: 4px; background: var(--surface2); border-radius: 999px; overflow: hidden; position: relative; }
+.gap-bar-ideal { position: absolute; right: 20%; top: 0; bottom: 0; width: 2px; background: var(--text-muted); z-index: 2; } /* Ideal marker */
+.gap-bar-fill { height: 100%; border-radius: 999px; width: 0; transition: width 700ms ease; }
+
+
+/* CANDIDATE DETAIL DRAWER */
+.drawer {
+  position: fixed; top: 48px; right: 0; width: 360px; height: calc(100vh - 48px);
+  background: var(--surface); border-left: 1px solid var(--border); padding: 0;
+  transform: translateX(100%); transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000; display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+}
+.drawer.drawer-open { transform: translateX(0); }
+
+.drawer-header {
+  height: 48px; background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 0 16px; display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.drawer-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.drawer-close { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; line-height: 1; padding: 4px; }
+.drawer-close:hover { color: var(--text-primary); }
+
+.drawer-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+.drawer-score-hero { margin-bottom: 24px; }
+.drawer-score-row { display: flex; align-items: baseline; gap: 8px; }
+.drawer-score-val { font: 300 52px var(--font-mono); color: var(--parchment); line-height: 1; }
+.drawer-score-lbl { font: 10px var(--font-mono); color: var(--text-muted); }
+.drawer-confidence { font: 11px var(--font-mono); color: var(--sage); margin-top: 8px; }
+
+.drawer-signals { margin-bottom: 24px; }
+.drawer-signal-row { display: flex; align-items: center; margin-bottom: 8px; }
+.drawer-signal-lbl { font: 12px var(--font-sans); color: var(--text-secondary); width: 120px; }
+.drawer-signal-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; margin: 0 12px; }
+.drawer-signal-bar-fill { height: 100%; border-radius: 999px; }
+.drawer-signal-val { font: 12px var(--font-mono); color: var(--parchment-muted); width: 24px; text-align: right; }
+
+.drawer-section-lbl { font: 9px var(--font-mono); color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.1em; }
+
+.drawer-reasoning { margin-bottom: 24px; }
+.reasoning-bullet {
+  background: var(--surface2); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px;
+  font: 12px var(--font-sans); color: var(--text-secondary); line-height: 1.6;
+  display: flex; gap: 6px;
+}
+.reasoning-bullet::before { content: '›'; color: var(--parchment-muted); font-weight: bold; }
+
+.drawer-skills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+
+.drawer-comparable { margin-bottom: 16px; }
+.comp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.comp-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--parchment); }
+.comp-name { font: 12px var(--font-sans); color: var(--text-primary); flex: 1; }
+.comp-badge { font: 10px var(--font-mono); padding: 2px 6px; border-radius: 4px; }
+.comp-badge.sage { background: rgba(141,186,133,0.1); color: var(--sage); }
+
+.drawer-footer {
+  border-top: 1px solid var(--border); padding: 12px 16px; background: var(--surface);
+  flex-shrink: 0;
+}
+.btn-primary {
+  width: 100%; background: var(--parchment); color: var(--ink); border: none; border-radius: 8px;
+  padding: 10px 0; font: 500 13px var(--font-sans); cursor: pointer; transition: 150ms;
+}
+.btn-primary:hover { background: var(--parchment-dim); }
+.btn-ghost {
+  width: 100%; background: transparent; color: var(--text-muted); border: 1px solid transparent; border-radius: 8px;
+  padding: 10px 0; font: 500 13px var(--font-sans); cursor: pointer; transition: 150ms; margin-top: 8px;
+}
+.btn-ghost:hover { border-color: var(--border-hi); color: var(--text-primary); }
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 900px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .left-sidebar { 
+    top: 48px; left: 0; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border);
+    padding: 8px 16px; display: flex; overflow-x: auto; white-space: nowrap; z-index: 90;
+  }
+  .sidebar-section-label, .mini-stat-box, .sidebar-divider, .nav-item span { display: none; }
+  .nav-item { padding: 8px 12px; height: auto; border-left: none; border-bottom: 2px solid transparent; }
+  .nav-item.active { border-left: none; border-bottom-color: var(--parchment); padding-left: 12px; }
+  .main-content { margin-left: 0; margin-top: calc(48px + 46px); } /* Approx height of mobile nav */
+  .drawer { top: auto; bottom: 0; right: 0; width: 100%; height: 85vh; transform: translateY(100%); border-left: none; border-top: 1px solid var(--border); border-radius: 16px 16px 0 0; }
+  .drawer.drawer-open { transform: translateY(0); }
+  .metric-strip { grid-template-columns: repeat(2, 1fr); }
+  .metric-tile { border-bottom: 1px solid var(--border); }
+  .metric-tile:nth-child(2), .metric-tile:nth-child(4) { border-right: none; }
+  .metric-tile:nth-child(3), .metric-tile:nth-child(4) { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <div class="brand-dot"></div>
+    <div class="brand-text">TalentLens</div>
+  </div>
+  <div class="nav-center">
+    <div class="search-wrapper">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" placeholder="Search candidates, skills, roles…" />
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="btn-refresh">⟳ Refresh</button>
+    <div class="notification-bell">🔔<div class="notification-dot"></div></div>
+    <div class="user-avatar">AD</div>
+  </div>
+</nav>
+
+<aside class="left-sidebar">
+  <div class="sidebar-section-label">WORKSPACE</div>
+  <div class="nav-item active"><span>⊞ Dashboard</span></div>
+  <div class="nav-item"><span>⊟ Candidates</span></div>
+  <div class="nav-item"><span>◈ Analysis</span></div>
+  <div class="nav-item"><span>↗ Reports</span></div>
+  <div class="nav-item"><span>⚙ Settings</span></div>
+  
+  <div class="sidebar-divider"></div>
+  
+  <div class="mini-stat-box">
+    <div class="stat-row-1"><span class="lbl">Last run</span><span class="val">2 min ago</span></div>
+    <div class="stat-row-2"><span class="lbl">Analyzed</span><span class="val">24</span></div>
+    <div class="stat-row-3"><div class="blinking-dot"></div><span class="lbl">Model active</span></div>
+  </div>
+</aside>
+
+<main class="main-content">
+  
+  <div class="metric-strip">
+    <div class="metric-tile">
+      <div class="metric-label">ANALYZED</div>
+      <div class="metric-val" data-target="24">0</div>
+      <div class="metric-delta delta-pos">↑ 8 from last week</div>
+    </div>
+    <div class="metric-tile">
+      <div class="metric-label">AVG SCORE</div>
+      <div class="metric-val" data-target="76.8" data-decimals="1">0.0</div>
+      <div class="metric-delta delta-pos">↑ 2.4% this run</div>
+    </div>
+    <div class="metric-tile">
+      <div class="metric-label">TOP MATCH</div>
+      <div class="metric-val" data-target="91" data-suffix="%">0%</div>
+      <div class="metric-delta delta-neu">→ Aditya Rao</div>
+    </div>
+    <div class="metric-tile">
+      <div class="metric-label">SHORTLISTED</div>
+      <div class="metric-val" data-target="6">0</div>
+      <div class="metric-delta delta-neg">↓ 2 passed</div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    
+    <section class="main-column">
+      <div class="toolbar-row">
+        <div class="toolbar-left">
+          <span class="toolbar-title">Candidates</span>
+          <span class="toolbar-count">(24)</span>
+        </div>
+        <div class="toolbar-right">
+          <select class="sort-select">
+            <option>Score: High → Low</option>
+            <option>Score: Low → High</option>
+            <option>Name A–Z</option>
+            <option>Experience</option>
+          </select>
+          <div class="view-toggles">
+            <button class="view-btn active">≡</button>
+            <button class="view-btn">⊞</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="filter-row">
+        <button class="filter-chip">All Stages ▾</button>
+        <button class="filter-chip">Any Experience ▾</button>
+        <button class="filter-chip">Min Score: 0 ▾</button>
+        <button class="filter-chip active">Skills: Any ▾</button>
+      </div>
+      
+      <div class="candidate-list-wrapper">
+        <div class="list-header">
+          <div class="header-col col-rank">#</div>
+          <div class="header-col col-candidate">Candidate</div>
+          <div class="header-col col-score">Score</div>
+          <div class="header-col col-signals">Signals</div>
+          <div class="header-col col-skills">Skills</div>
+          <div class="header-col col-stage">Stage</div>
+          <div class="header-col col-action">···</div>
+        </div>
+        
+        <!-- ROW 1 -->
+        <div class="candidate-row" onclick="openDrawer('Aditya Rao', 91, ['Strong PyTorch depth with production deployment experience.', 'Career arc shows deliberate ML platform specialization.', 'GitHub signal: 12 repos, 4 with >50 stars.'], ['PyTorch', 'MLOps'])">
+          <div class="row-rank">1</div>
+          <div class="row-candidate">
+            <div class="cand-avatar">AR</div>
+            <div class="cand-info"><div class="cand-name">Aditya Rao</div><div class="cand-role">Sr ML Engineer · 5yr</div></div>
+          </div>
+          <div class="row-score">
+            <div class="score-val sage">91</div>
+            <div class="score-bar-bg"><div class="score-bar-fill sage" data-width="91%"></div></div>
+          </div>
+          <div class="row-signals">
+            <div class="signal-dot-wrapper" data-tooltip="Semantic: 94"><div class="signal-dot f-100"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Trajectory: 88"><div class="signal-dot f-100"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Impact: 82"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Velocity: 64"><div class="signal-dot f-50"></div></div>
+          </div>
+          <div class="row-skills"><div class="skill-pill">PyTorch</div><div class="skill-pill">MLOps</div></div>
+          <div class="row-stage"><div class="stage-badge shortlisted">Shortlisted</div></div>
+          <div class="row-action">···</div>
+        </div>
+
+        <!-- ROW 2 -->
+        <div class="candidate-row" onclick="openDrawer('Sanya Kapoor', 84, ['Kubernetes mastery aligned with infra needs.', 'Consistent delivery on scalable architectures.'], ['Kubernetes', 'Terraform'])">
+          <div class="row-rank">2</div>
+          <div class="row-candidate">
+            <div class="cand-avatar">SK</div>
+            <div class="cand-info"><div class="cand-name">Sanya Kapoor</div><div class="cand-role">ML Ops Engineer · 4yr</div></div>
+          </div>
+          <div class="row-score">
+            <div class="score-val sand">84</div>
+            <div class="score-bar-bg"><div class="score-bar-fill sand" data-width="84%"></div></div>
+          </div>
+          <div class="row-signals">
+            <div class="signal-dot-wrapper" data-tooltip="Semantic: 87"><div class="signal-dot f-100"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Trajectory: 80"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Impact: 76"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Velocity: 70"><div class="signal-dot f-75"></div></div>
+          </div>
+          <div class="row-skills"><div class="skill-pill">Kubernetes</div><div class="skill-pill">Terraform</div></div>
+          <div class="row-stage"><div class="stage-badge interview">Interview</div></div>
+          <div class="row-action">···</div>
+        </div>
+        
+        <!-- ROW 3 -->
+        <div class="candidate-row" onclick="openDrawer('Priya Mehta', 78, ['Solid analytical foundation but lighter on deep learning frameworks.', 'Good trajectory in data pipeline optimization.'], ['TensorFlow', 'SQL'])">
+          <div class="row-rank">3</div>
+          <div class="row-candidate">
+            <div class="cand-avatar">PM</div>
+            <div class="cand-info"><div class="cand-name">Priya Mehta</div><div class="cand-role">Data Scientist · 3yr</div></div>
+          </div>
+          <div class="row-score">
+            <div class="score-val sand">78</div>
+            <div class="score-bar-bg"><div class="score-bar-fill sand" data-width="78%"></div></div>
+          </div>
+          <div class="row-signals">
+            <div class="signal-dot-wrapper" data-tooltip="Semantic: 81"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Trajectory: 72"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Impact: 74"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Velocity: 58"><div class="signal-dot f-50"></div></div>
+          </div>
+          <div class="row-skills"><div class="skill-pill">TensorFlow</div><div class="skill-pill">SQL</div></div>
+          <div class="row-stage"><div class="stage-badge screening">Screening</div></div>
+          <div class="row-action">···</div>
+        </div>
+
+        <!-- ROW 4 -->
+        <div class="candidate-row" onclick="openDrawer('Dev Nair', 72, ['Strong backend engineering fundamentals.', 'Limited direct ML experience, requires onboarding.'], ['Go', 'Postgres'])">
+          <div class="row-rank">4</div>
+          <div class="row-candidate">
+            <div class="cand-avatar">DN</div>
+            <div class="cand-info"><div class="cand-name">Dev Nair</div><div class="cand-role">Backend Engineer · 6yr</div></div>
+          </div>
+          <div class="row-score">
+            <div class="score-val sand">72</div>
+            <div class="score-bar-bg"><div class="score-bar-fill sand" data-width="72%"></div></div>
+          </div>
+          <div class="row-signals">
+            <div class="signal-dot-wrapper" data-tooltip="Semantic: 75"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Trajectory: 68"><div class="signal-dot f-50"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Impact: 70"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Velocity: 55"><div class="signal-dot f-50"></div></div>
+          </div>
+          <div class="row-skills"><div class="skill-pill">Go</div><div class="skill-pill">Postgres</div></div>
+          <div class="row-stage"><div class="stage-badge screening">Screening</div></div>
+          <div class="row-action">···</div>
+        </div>
+
+        <!-- ROW 5 -->
+        <div class="candidate-row" onclick="openDrawer('Rohan Iyer', 61, ['Early career researcher, academic focus.', 'Lacks production engineering scale markers.'], ['HuggingFace', 'NLP'])">
+          <div class="row-rank">5</div>
+          <div class="row-candidate">
+            <div class="cand-avatar">RI</div>
+            <div class="cand-info"><div class="cand-name">Rohan Iyer</div><div class="cand-role">AI Researcher · 2yr</div></div>
+          </div>
+          <div class="row-score">
+            <div class="score-val sand">61</div>
+            <div class="score-bar-bg"><div class="score-bar-fill sand" data-width="61%"></div></div>
+          </div>
+          <div class="row-signals">
+            <div class="signal-dot-wrapper" data-tooltip="Semantic: 70"><div class="signal-dot f-75"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Trajectory: 55"><div class="signal-dot f-50"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Impact: 63"><div class="signal-dot f-50"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Velocity: 48"><div class="signal-dot f-25"></div></div>
+          </div>
+          <div class="row-skills"><div class="skill-pill">HuggingFace</div><div class="skill-pill">NLP</div></div>
+          <div class="row-stage"><div class="stage-badge screening">Screening</div></div>
+          <div class="row-action">···</div>
+        </div>
+
+        <!-- ROW 6 -->
+        <div class="candidate-row" onclick="openDrawer('Arjun Joshi', 55, ['Junior profile with basic NLP exposure.', 'Velocity and impact signals are below threshold.'], ['LangChain', 'spaCy'])">
+          <div class="row-rank">6</div>
+          <div class="row-candidate">
+            <div class="cand-avatar">AJ</div>
+            <div class="cand-info"><div class="cand-name">Arjun Joshi</div><div class="cand-role">NLP Engineer · 3yr</div></div>
+          </div>
+          <div class="row-score">
+            <div class="score-val rose">55</div>
+            <div class="score-bar-bg"><div class="score-bar-fill rose" data-width="55%"></div></div>
+          </div>
+          <div class="row-signals">
+            <div class="signal-dot-wrapper" data-tooltip="Semantic: 65"><div class="signal-dot f-50"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Trajectory: 50"><div class="signal-dot f-50"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Impact: 55"><div class="signal-dot f-50"></div></div>
+            <div class="signal-dot-wrapper" data-tooltip="Velocity: 40"><div class="signal-dot f-25"></div></div>
+          </div>
+          <div class="row-skills"><div class="skill-pill">LangChain</div><div class="skill-pill">spaCy</div></div>
+          <div class="row-stage"><div class="stage-badge screening">Screening</div></div>
+          <div class="row-action">···</div>
+        </div>
+
+        <div class="pagination-strip">
+          <div class="pagination-info">Showing 1–6 of 24</div>
+          <div class="pagination-controls">
+            <button class="btn-page">‹ Prev</button>
+            <button class="btn-page">Next ›</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    
+    <aside class="right-column">
+      
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-title">RUN SUMMARY</span>
+          <span class="panel-meta">May 28, 2025, 14:32</span>
+        </div>
+        <div class="panel-divider"></div>
+        <div class="summary-row"><span class="summary-lbl">Job role</span><span class="summary-val">Senior ML Engineer</span></div>
+        <div class="summary-row"><span class="summary-lbl">Resumes analyzed</span><span class="summary-val">24</span></div>
+        <div class="summary-row"><span class="summary-lbl">Signals computed</span><span class="summary-val">96</span></div>
+        <div class="summary-row"><span class="summary-lbl">Model version</span><span class="summary-val">v2.4.1</span></div>
+        <div class="summary-row"><span class="summary-lbl">Processing time</span><span class="summary-val">3.2s</span></div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header"><span class="panel-title">SCORE DISTRIBUTION</span></div>
+        <div class="panel-divider"></div>
+        <div class="dist-row">
+          <span class="dist-lbl">90-100</span>
+          <div class="dist-bar-wrapper"><div class="dist-bar-fill sage" data-width="10%"></div></div>
+          <span class="dist-count">1</span>
+        </div>
+        <div class="dist-row">
+          <span class="dist-lbl">80-89</span>
+          <div class="dist-bar-wrapper"><div class="dist-bar-fill sage" data-width="30%"></div></div>
+          <span class="dist-count">3</span>
+        </div>
+        <div class="dist-row">
+          <span class="dist-lbl">70-79</span>
+          <div class="dist-bar-wrapper"><div class="dist-bar-fill sand" data-width="80%"></div></div>
+          <span class="dist-count">8</span>
+        </div>
+        <div class="dist-row">
+          <span class="dist-lbl">60-69</span>
+          <div class="dist-bar-wrapper"><div class="dist-bar-fill sand" data-width="70%"></div></div>
+          <span class="dist-count">7</span>
+        </div>
+        <div class="dist-row">
+          <span class="dist-lbl">&lt;60</span>
+          <div class="dist-bar-wrapper"><div class="dist-bar-fill rose" data-width="50%"></div></div>
+          <span class="dist-count">5</span>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header"><span class="panel-title">SIGNAL GAPS <span style="text-transform:none">(across pool)</span></span></div>
+        <div class="panel-divider"></div>
+        
+        <div class="gap-row">
+          <div class="gap-header">
+            <span class="gap-title">Learning Velocity</span>
+            <span class="gap-meta rose">avg 54 ↓ low</span>
+          </div>
+          <div class="gap-bar-wrapper">
+            <div class="gap-bar-fill rose" data-width="54%"></div>
+            <div class="gap-bar-ideal"></div>
+          </div>
+        </div>
+        
+        <div class="gap-row">
+          <div class="gap-header">
+            <span class="gap-title">Project Impact</span>
+            <span class="gap-meta sand">avg 68 ↓ below target</span>
+          </div>
+          <div class="gap-bar-wrapper">
+            <div class="gap-bar-fill sand" data-width="68%"></div>
+            <div class="gap-bar-ideal"></div>
+          </div>
+        </div>
+
+        <div class="gap-row">
+          <div class="gap-header">
+            <span class="gap-title">Career Trajectory</span>
+            <span class="gap-meta" style="color:var(--parchment-muted)">avg 72 → near target</span>
+          </div>
+          <div class="gap-bar-wrapper">
+            <div class="gap-bar-fill" style="background:var(--parchment-muted)" data-width="72%"></div>
+            <div class="gap-bar-ideal"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+  </div>
+</main>
+
+<div class="drawer" id="candidateDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title" id="drawerName">Candidate Name</div>
+    <button class="drawer-close" onclick="closeDrawer()">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-score-hero">
+      <div class="drawer-score-row">
+        <span class="drawer-score-val" id="drawerScore">0</span>
+        <span class="drawer-score-lbl">Overall match</span>
+      </div>
+      <div class="drawer-confidence">High · 87% certainty</div>
+    </div>
+    
+    <div class="drawer-signals">
+      <div class="drawer-signal-row">
+        <div class="drawer-signal-lbl">Semantic Match</div>
+        <div class="drawer-signal-bar-wrap"><div class="drawer-signal-bar-fill sage" style="width: 94%"></div></div>
+        <div class="drawer-signal-val">94</div>
+      </div>
+      <div class="drawer-signal-row">
+        <div class="drawer-signal-lbl">Career Trajectory</div>
+        <div class="drawer-signal-bar-wrap"><div class="drawer-signal-bar-fill sage" style="width: 88%"></div></div>
+        <div class="drawer-signal-val">88</div>
+      </div>
+      <div class="drawer-signal-row">
+        <div class="drawer-signal-lbl">Project Impact</div>
+        <div class="drawer-signal-bar-wrap"><div class="drawer-signal-bar-fill sand" style="width: 82%"></div></div>
+        <div class="drawer-signal-val">82</div>
+      </div>
+      <div class="drawer-signal-row">
+        <div class="drawer-signal-lbl">Learning Velocity</div>
+        <div class="drawer-signal-bar-wrap"><div class="drawer-signal-bar-fill sand" style="width: 64%"></div></div>
+        <div class="drawer-signal-val">64</div>
+      </div>
+    </div>
+
+    <div class="drawer-section-lbl">AI REASONING</div>
+    <div class="drawer-reasoning" id="drawerReasoning">
+      <!-- Injected via JS -->
+    </div>
+
+    <div class="drawer-section-lbl">SKILLS</div>
+    <div class="drawer-skills" id="drawerSkills">
+      <!-- Injected via JS -->
+    </div>
+
+    <div class="drawer-section-lbl">COMPARABLE CANDIDATES</div>
+    <div class="drawer-comparable">
+      <div class="comp-row">
+        <div class="comp-avatar">SK</div><div class="comp-name">Sanya Kapoor</div><div class="comp-badge sage">84</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-avatar">PM</div><div class="comp-name">Priya Mehta</div><div class="comp-badge" style="background:rgba(184,154,110,0.1); color:var(--sand)">78</div>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-primary">Shortlist</button>
+    <button class="btn-ghost">Pass</button>
+  </div>
+</div>
+
+<script>
+// Filter chip interaction
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('active');
+  });
+});
+
+// Drawer functionality
+const drawer = document.getElementById('candidateDrawer');
+const dName = document.getElementById('drawerName');
+const dScore = document.getElementById('drawerScore');
+const dReasoning = document.getElementById('drawerReasoning');
+const dSkills = document.getElementById('drawerSkills');
+
+function openDrawer(name, score, reasoningArr, skillsArr) {
+  dName.textContent = name;
+  dScore.textContent = score;
+  dScore.className = 'drawer-score-val ' + (score >= 85 ? 'sage' : score >= 70 ? 'sand' : 'rose');
+  
+  dReasoning.innerHTML = reasoningArr.map(r => `<div class="reasoning-bullet">${r}</div>`).join('');
+  dSkills.innerHTML = skillsArr.map(s => `<div class="skill-pill">${s}</div>`).join('');
+  
+  drawer.classList.add('drawer-open');
+}
+
+function closeDrawer() {
+  drawer.classList.remove('drawer-open');
+}
+
+// Close drawer on escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeDrawer();
+});
+
+// Animate elements on load
+document.addEventListener("DOMContentLoaded", () => {
+  // Count up animations
+  const duration = 800; // ms
+  const frameRate = 1000 / 60; // 60fps
+  const totalFrames = Math.round(duration / frameRate);
+  
+  document.querySelectorAll('.metric-val').forEach(el => {
+    const target = parseFloat(el.getAttribute('data-target'));
+    const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+    const suffix = el.getAttribute('data-suffix') || '';
+    let frame = 0;
+    
+    const counter = setInterval(() => {
+      frame++;
+      const progress = frame / totalFrames;
+      const current = (target * progress).toFixed(decimals);
+      el.textContent = current + suffix;
+      
+      if (frame >= totalFrames) {
+        clearInterval(counter);
+        el.textContent = target.toFixed(decimals) + suffix;
+      }
+    }, frameRate);
+  });
+
+  // Staggered width animations for bars
+  setTimeout(() => {
+    document.querySelectorAll('.score-bar-fill, .dist-bar-fill, .gap-bar-fill').forEach((bar, index) => {
+      setTimeout(() => {
+        bar.style.width = bar.getAttribute('data-width');
+      }, index * 20); // Small stagger effect
+    });
+  }, 100);
+});
+</script>
+
+</body>
+</html>

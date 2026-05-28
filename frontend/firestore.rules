@@ -1,0 +1,55 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper Functions ───────────────────────────────────────────────────
+
+    // Returns true only when the request comes from a signed-in user.
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Returns true when the requesting user owns the document.
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Ensures incoming data contains only the specified fields.
+    // Prevents clients from writing extra fields the app doesn't expect.
+    function hasOnlyFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // ── Deny All By Default ────────────────────────────────────────────────
+    // Every collection must explicitly grant access below.
+    // Deny-all default is the single most important Firestore security rule.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ── Users ──────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read:   if isOwner(userId);
+      allow create: if isOwner(userId)
+                    && hasOnlyFields(['displayName', 'email', 'photoURL', 'createdAt']);
+      allow update: if isOwner(userId)
+                    && hasOnlyFields(['displayName', 'photoURL', 'updatedAt']);
+      allow delete: if false; // soft-delete only
+    }
+
+    // ── TODO: Add feature-specific collections here ────────────────────────
+    //
+    // Pattern to follow:
+    //
+    // match /items/{itemId} {
+    //   allow read:   if isAuthenticated();
+    //   allow create: if isAuthenticated()
+    //                 && hasOnlyFields(['title', 'userId', 'createdAt'])
+    //                 && request.resource.data.userId == request.auth.uid;
+    //   allow update: if isOwner(resource.data.userId)
+    //                 && hasOnlyFields(['title', 'updatedAt']);
+    //   allow delete: if isOwner(resource.data.userId);
+    // }
+  }
+}
