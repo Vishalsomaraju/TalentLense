@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /**
  * @module config/env
  * @description Typed, validated environment variable access.
