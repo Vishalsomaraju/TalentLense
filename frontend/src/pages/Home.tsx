@@ -1,4 +1,6 @@
-export default function Home(): JSX.Element {
+import type React from "react";
+
+export default function Home(): React.JSX.Element {
   return (
     <main className="hero-shell">
       <div className="hero-grid-mask" aria-hidden="true" />

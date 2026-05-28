@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
+import type React from "react";
 
-export default function CandidateDetail(): JSX.Element {
+export default function CandidateDetail(): React.JSX.Element {
   const { id } = useParams();
 
   return (

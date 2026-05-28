@@ -19,7 +19,8 @@ const REQUIRED_VARS = [
 
 // Validate at module load — app won't start with missing config
 REQUIRED_VARS.forEach((key) => {
-  if (!(import.meta.env as any)[key]) {
+  const metaEnv = import.meta.env as unknown as Record<string, string | undefined>;
+  if (!metaEnv[key]) {
     throw new Error(
       `[env] Missing required variable: ${key}\n` +
       `Copy .env.example to .env.local and fill in the values.`
