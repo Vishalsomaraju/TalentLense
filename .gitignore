@@ -81,3 +81,18 @@ pre_submission_audit.md
 *.tfstate
 *.tfstate.*
 .terraform/
+
+# ── Python / Backend / ML ─────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.class
+venv/
+.venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+*.sqlite3
+
+# ── Jupyter Notebooks ─────────────────────────────────────────────────────────
+.ipynb_checkpoints/
