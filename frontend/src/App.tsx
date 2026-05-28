@@ -1,40 +1,14 @@
-/**
- * @module App
- * @description Root application component.
- * Handles routing, analytics page tracking, and top-level error boundary.
- * All routes are wrapped in ErrorBoundary so render errors are caught gracefully.
- */
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import { analyticsService } from '@/services/analyticsService';
-import { ROUTES } from '@/constants';
-// import { HomePage } from '@/pages/HomePage';  // TODO: add pages
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
+import CandidateDetail from './pages/CandidateDetail';
 
-/**
- * Tracks page views on every route change.
- * Must be rendered inside BrowserRouter to access location.
- */
-function Analytics(): null {
-  const location = useLocation();
-
-  useEffect(() => {
-    // GA4 doesn't auto-track SPA navigation — we must fire this manually
-    analyticsService.trackPageView(location.pathname);
-  }, [location]);
-
-  return null;
-}
-
-export default function App(): JSX.Element {
+export default function App() {
   return (
-    <BrowserRouter>
-      <Analytics />
-      <ErrorBoundary>
-        <Routes>
-          <Route path={ROUTES.HOME} element={<div>TODO: Add pages</div>} />
-        </Routes>
-      </ErrorBoundary>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/candidate/:id" element={<CandidateDetail />} />
+    </Routes>
   );
 }
