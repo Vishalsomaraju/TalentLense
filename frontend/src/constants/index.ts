@@ -7,16 +7,16 @@
 
 // ── App config ────────────────────────────────────────────────────────────────
 export const APP_CONFIG = {
-  name: '__APP_NAME__',
-  version: '1.0.0',
-  supportEmail: 'support@example.com',
+  name: "__APP_NAME__",
+  version: "1.0.0",
+  supportEmail: "support@example.com",
 } as const;
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 export const ROUTES = {
-  HOME: '/',
-  DASHBOARD: '/dashboard',
-  PROFILE: '/profile',
+  HOME: "/",
+  DASHBOARD: "/dashboard",
+  PROFILE: "/profile",
 } as const;
 
 // ── Network ───────────────────────────────────────────────────────────────────

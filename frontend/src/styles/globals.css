@@ -54,7 +54,8 @@
 
 @layer utilities {
   .hero-grid-mask {
-    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
       linear-gradient(90deg, var(--border) 1px, transparent 1px);
     background-size: 64px 64px;
     opacity: 0.3;
@@ -71,7 +72,7 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
-  
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

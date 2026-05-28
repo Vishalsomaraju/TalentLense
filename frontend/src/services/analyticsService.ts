@@ -6,8 +6,8 @@
  * if the analytics provider changes.
  * @version 1.0.0
  */
-import { logEvent } from 'firebase/analytics';
-import { analytics } from '@/config/firebase';
+import { logEvent } from "firebase/analytics";
+import { analytics } from "@/config/firebase";
 
 class AnalyticsService {
   /**
@@ -17,7 +17,7 @@ class AnalyticsService {
    * @param pagePath - The current pathname (e.g. '/dashboard')
    */
   trackPageView(pagePath: string): void {
-    logEvent(analytics, 'page_view', {
+    logEvent(analytics, "page_view", {
       page_title: document.title,
       page_location: window.location.href,
       page_path: pagePath,
@@ -33,9 +33,9 @@ class AnalyticsService {
    */
   trackAction(
     actionName: string,
-    metadata?: Record<string, string | number | boolean>
+    metadata?: Record<string, string | number | boolean>,
   ): void {
-    logEvent(analytics, 'action_completed', {
+    logEvent(analytics, "action_completed", {
       action_name: actionName,
       timestamp: Date.now(),
       ...metadata,
@@ -50,7 +50,7 @@ class AnalyticsService {
    * @param errorMessage - The error message (truncated to GA4 limit)
    */
   trackError(errorType: string, errorMessage: string): void {
-    logEvent(analytics, 'app_error', {
+    logEvent(analytics, "app_error", {
       error_type: errorType,
       error_message: errorMessage.slice(0, 150),
       page_path: window.location.pathname,
@@ -65,7 +65,7 @@ class AnalyticsService {
    * @param resultCount - Number of results returned
    */
   trackSearch(searchTerm: string, resultCount: number): void {
-    logEvent(analytics, 'search', {
+    logEvent(analytics, "search", {
       search_term: searchTerm,
       result_count: resultCount,
     });

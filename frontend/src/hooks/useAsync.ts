@@ -9,8 +9,8 @@
  *
  * @version 1.0.0
  */
-import { useState, useCallback } from 'react';
-import type { ApiResponse } from '@/types';
+import { useState, useCallback } from "react";
+import type { ApiResponse } from "@/types";
 
 interface AsyncState<T> {
   isLoading: boolean;
@@ -23,7 +23,11 @@ interface UseAsyncReturn<T> extends AsyncState<T> {
   reset: () => void;
 }
 
-const INITIAL: AsyncState<never> = { isLoading: false, error: null, data: null };
+const INITIAL: AsyncState<never> = {
+  isLoading: false,
+  error: null,
+  data: null,
+};
 
 export function useAsync<T>(): UseAsyncReturn<T> {
   const [state, setState] = useState<AsyncState<T>>(INITIAL as AsyncState<T>);
@@ -39,7 +43,7 @@ export function useAsync<T>(): UseAsyncReturn<T> {
       }
       return result;
     },
-    []
+    [],
   );
 
   const reset = useCallback(() => setState(INITIAL as AsyncState<T>), []);

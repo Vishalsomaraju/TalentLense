@@ -1,7 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
-import CandidateDetail from './pages/CandidateDetail';
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import CandidateDetail from "./pages/CandidateDetail";
 
 export default function App() {
   return (
