@@ -1,13 +1,14 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SignalBar } from "../components/ui/SignalBar";
+import { ROUTES } from "@/constants";
 
 export default function Login(): React.JSX.Element {
   const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/dashboard");
+    navigate(ROUTES.DASHBOARD);
   };
 
   return (
@@ -15,7 +16,7 @@ export default function Login(): React.JSX.Element {
       {/* Left Panel - Login Form */}
       <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 lg:px-24">
         <div className="w-full max-w-md mx-auto animate-fade-up">
-          <Link to="/" className="inline-flex items-center gap-2.5 text-parchment text-[15px] font-medium mb-12">
+          <Link to={ROUTES.HOME} className="inline-flex items-center gap-2.5 text-parchment text-[15px] font-medium mb-12">
             <span className="w-2.5 h-2.5 rounded-full bg-parchment" />
             <span>TalentLens</span>
           </Link>
@@ -68,7 +69,7 @@ export default function Login(): React.JSX.Element {
           </form>
 
           <p className="mt-8 text-center text-xs text-text-secondary">
-            Don't have an account? <Link to="/" className="text-parchment hover:underline">Contact Sales</Link>
+            Don't have an account? <Link to={ROUTES.HOME} className="text-parchment hover:underline">Contact Sales</Link>
           </p>
         </div>
       </div>

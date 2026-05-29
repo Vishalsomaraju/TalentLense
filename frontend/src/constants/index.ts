@@ -15,7 +15,15 @@ export const APP_CONFIG = {
 // ── Routes ────────────────────────────────────────────────────────────────────
 export const ROUTES = {
   HOME: "/",
+  LOGIN: "/login",
   DASHBOARD: "/dashboard",
+  JOBS: "/jobs",
+  CANDIDATES: "/candidates",
+  CANDIDATE_DETAIL: "/candidate/:id",
+  ANALYSIS_NEW: "/analysis/new",
+  ANALYSIS_PROCESSING: "/analysis/processing",
+  REPORTS: "/reports",
+  SETTINGS: "/settings",
   PROFILE: "/profile",
 } as const;
 

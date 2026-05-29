@@ -1,23 +1,9 @@
 import type React from "react";
 import { useEffect } from "react";
-import { CandidateSignal } from "./CandidateRow";
+import { Candidate, CandidateSignal } from "@/types";
 import { ChevronRight, X, UserCheck, UserMinus } from "lucide-react";
 import { SignalBar } from "../ui/SignalBar";
 import { Badge } from "../ui/Badge";
-
-export interface Candidate {
-  id: string;
-  rank: number;
-  name: string;
-  initials: string;
-  role: string;
-  score: number;
-  signals: CandidateSignal[];
-  reasoning: string[];
-  skills: string[];
-  stage: "Screening" | "Interview" | "Shortlisted" | "Rejected";
-}
-
 interface CandidateDrawerProps {
   isOpen: boolean;
   onClose: () => void;

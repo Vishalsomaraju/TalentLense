@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { ROUTES } from "@/constants";
 
 export default function AnalysisProcessing(): React.JSX.Element {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export default function AnalysisProcessing(): React.JSX.Element {
     // After ~3.5 seconds, navigate to dashboard
     const timeout = setTimeout(() => {
       clearInterval(interval);
-      navigate("/dashboard");
+      navigate(ROUTES.DASHBOARD);
     }, 3500);
 
     return () => {

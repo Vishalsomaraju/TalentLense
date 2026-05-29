@@ -4,10 +4,7 @@ import { Badge } from "../ui/Badge";
 import { SignalBar } from "../ui/SignalBar";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-export interface CandidateSignal {
-  label: string;
-  value: number;
-}
+import { CandidateSignal } from "@/types";
 
 export interface CandidateRowProps {
   rank: number;

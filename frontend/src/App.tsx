@@ -11,21 +11,22 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import Jobs from "./pages/Jobs";
 import NotFound from "./pages/NotFound";
+import { ROUTES } from "@/constants";
 
 export default function App(): React.JSX.Element {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/jobs" element={<Jobs />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/candidate/:id" element={<CandidateDetail />} />
-      <Route path="/analysis/new" element={<NewAnalysis />} />
-      <Route path="/analysis/processing" element={<AnalysisProcessing />} />
-      <Route path="/candidates" element={<Candidates />} />
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path={ROUTES.HOME} element={<Home />} />
+      <Route path={ROUTES.LOGIN} element={<Login />} />
+      <Route path={ROUTES.JOBS} element={<Jobs />} />
+      <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+      <Route path={ROUTES.CANDIDATE_DETAIL} element={<CandidateDetail />} />
+      <Route path={ROUTES.ANALYSIS_NEW} element={<NewAnalysis />} />
+      <Route path={ROUTES.ANALYSIS_PROCESSING} element={<AnalysisProcessing />} />
+      <Route path={ROUTES.CANDIDATES} element={<Candidates />} />
+      <Route path={ROUTES.REPORTS} element={<Reports />} />
+      <Route path={ROUTES.SETTINGS} element={<Settings />} />
+      <Route path={ROUTES.PROFILE} element={<Profile />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

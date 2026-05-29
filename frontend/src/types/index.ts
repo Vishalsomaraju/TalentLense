@@ -22,13 +22,40 @@ export interface User {
   createdAt: number;
 }
 
-// ── TODO: Add feature-specific interfaces below ───────────────────────────────
-//
-// Example:
-// export interface Item {
-//   id: string;
-//   title: string;
-//   userId: string;
-//   createdAt: number;
-//   updatedAt: number;
-// }
+export interface CandidateSignal {
+  label: string;
+  value: number;
+}
+
+export interface Candidate {
+  id: string;
+  rank: number;
+  name: string;
+  initials: string;
+  role: string;
+  score: number;
+  signals: CandidateSignal[];
+  reasoning: string[];
+  skills: string[];
+  stage: "Screening" | "Interview" | "Shortlisted" | "Rejected";
+}
+
+export interface Job {
+  slug: string;
+  title: string;
+  candidates: number;
+  avgScore: number;
+  dateCreated: string;
+  status: "Active" | "Closed";
+}
+
+export interface AnalysisRun {
+  id: string;
+  jobSlug: string;
+  jobTitle: string;
+  candidateCount: number;
+  avgScore: number;
+  topScore: number;
+  createdAt: string;
+  processingTimeMs: number;
+}

@@ -1,6 +1,7 @@
 import type React from "react";
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Users, Target, LineChart, Settings } from "lucide-react";
+import { ROUTES } from "@/constants";
 
 export function Sidebar(): React.JSX.Element {
   return (
@@ -11,7 +12,7 @@ export function Sidebar(): React.JSX.Element {
 
       <nav className="flex flex-col max-[900px]:flex-row">
         <NavLink
-          to="/dashboard"
+          to={ROUTES.DASHBOARD}
           className={({ isActive }) =>
             `h-[34px] px-4 flex items-center gap-2.5 text-[13px] cursor-pointer transition-colors duration-120 border-l-2 pl-[14px] max-[900px]:h-auto max-[900px]:px-3 max-[900px]:py-2 max-[900px]:border-l-0 max-[900px]:border-b-2 max-[900px]:pl-3 ${
               isActive
@@ -23,7 +24,7 @@ export function Sidebar(): React.JSX.Element {
           <LayoutDashboard size={14} className="max-[900px]:hidden text-text-muted" /> Dashboard
         </NavLink>
         <NavLink
-          to="/candidates"
+          to={ROUTES.CANDIDATES}
           className={({ isActive }) =>
             `h-[34px] px-4 flex items-center gap-2.5 text-[13px] cursor-pointer transition-colors duration-120 border-l-2 pl-[14px] max-[900px]:h-auto max-[900px]:px-3 max-[900px]:py-2 max-[900px]:border-l-0 max-[900px]:border-b-2 max-[900px]:pl-3 ${
               isActive
@@ -35,7 +36,7 @@ export function Sidebar(): React.JSX.Element {
           <Users size={14} className="max-[900px]:hidden text-text-muted" /> Candidates
         </NavLink>
         <NavLink
-          to="/analysis/new"
+          to={ROUTES.ANALYSIS_NEW}
           className={({ isActive }) =>
             `h-[34px] px-4 flex items-center gap-2.5 text-[13px] cursor-pointer transition-colors duration-120 border-l-2 pl-[14px] max-[900px]:h-auto max-[900px]:px-3 max-[900px]:py-2 max-[900px]:border-l-0 max-[900px]:border-b-2 max-[900px]:pl-3 ${
               isActive
@@ -47,7 +48,7 @@ export function Sidebar(): React.JSX.Element {
           <Target size={14} className="max-[900px]:hidden text-text-muted" /> Analysis
         </NavLink>
         <NavLink
-          to="/reports"
+          to={ROUTES.REPORTS}
           className={({ isActive }) =>
             `h-[34px] px-4 flex items-center gap-2.5 text-[13px] cursor-pointer transition-colors duration-120 border-l-2 pl-[14px] max-[900px]:h-auto max-[900px]:px-3 max-[900px]:py-2 max-[900px]:border-l-0 max-[900px]:border-b-2 max-[900px]:pl-3 ${
               isActive
@@ -59,7 +60,7 @@ export function Sidebar(): React.JSX.Element {
           <LineChart size={14} className="max-[900px]:hidden text-text-muted" /> Reports
         </NavLink>
         <NavLink
-          to="/settings"
+          to={ROUTES.SETTINGS}
           className={({ isActive }) =>
             `h-[34px] px-4 flex items-center gap-2.5 text-[13px] cursor-pointer transition-colors duration-120 border-l-2 pl-[14px] max-[900px]:h-auto max-[900px]:px-3 max-[900px]:py-2 max-[900px]:border-l-0 max-[900px]:border-b-2 max-[900px]:pl-3 ${
               isActive

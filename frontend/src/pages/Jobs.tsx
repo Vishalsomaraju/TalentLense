@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { Plus } from "lucide-react";
+import { Job } from "@/types";
 
 export default function Jobs(): React.JSX.Element {
   const [showModal, setShowModal] = useState(false);
   
-  const jobs = [
+  const jobs: Job[] = [
     {
       slug: "senior-ml-engineer",
       title: "Senior ML Engineer",
