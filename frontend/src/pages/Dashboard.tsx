@@ -2,10 +2,8 @@ import type React from "react";
 import { useState } from "react";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { CandidateRow } from "../components/candidates/CandidateRow";
-import {
-  CandidateDrawer,
-  type Candidate,
-} from "../components/candidates/CandidateDrawer";
+import { CandidateDrawer } from "../components/candidates/CandidateDrawer";
+import { Candidate } from "@/types";
 
 const MOCK_CANDIDATES: Candidate[] = [
   {
@@ -96,33 +94,61 @@ import { List, Grid } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 const sparkAnalyzed = [
-  { val: 14 }, { val: 16 }, { val: 18 }, { val: 17 }, { val: 20 }, { val: 22 }, { val: 24 }
+  { val: 14 },
+  { val: 16 },
+  { val: 18 },
+  { val: 17 },
+  { val: 20 },
+  { val: 22 },
+  { val: 24 },
 ];
 const sparkScore = [
-  { val: 72 }, { val: 74 }, { val: 71 }, { val: 75 }, { val: 76 }, { val: 74 }, { val: 76.8 }
+  { val: 72 },
+  { val: 74 },
+  { val: 71 },
+  { val: 75 },
+  { val: 76 },
+  { val: 74 },
+  { val: 76.8 },
 ];
 const sparkMatch = [
-  { val: 82 }, { val: 84 }, { val: 84 }, { val: 88 }, { val: 86 }, { val: 90 }, { val: 91 }
+  { val: 88 },
+  { val: 85 },
+  { val: 89 },
+  { val: 90 },
+  { val: 88 },
+  { val: 91 },
+  { val: 91 },
 ];
 const sparkShortlisted = [
-  { val: 2 }, { val: 3 }, { val: 4 }, { val: 3 }, { val: 5 }, { val: 4 }, { val: 6 }
+  { val: 4 },
+  { val: 5 },
+  { val: 4 },
+  { val: 6 },
+  { val: 5 },
+  { val: 6 },
+  { val: 6 },
 ];
 
 export default function Dashboard(): React.JSX.Element {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null,
   );
-  
+
   const [searchParams] = useSearchParams();
   const jobParam = searchParams.get("job");
-  const jobTitle = jobParam 
-    ? jobParam.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
+  const jobTitle = jobParam
+    ? jobParam
+        .split("-")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ")
     : "Senior ML Engineer";
 
   return (
     <DashboardLayout>
       <div className="mb-4 text-[13px] text-text-secondary font-medium tracking-wide">
-        {jobTitle} <span className="text-border-hi mx-1.5">•</span> May 28, 2025 <span className="text-border-hi mx-1.5">•</span> 24 candidates analyzed.
+        {jobTitle} <span className="text-border-hi mx-1.5">•</span> May 28, 2025{" "}
+        <span className="text-border-hi mx-1.5">•</span> 24 candidates analyzed.
       </div>
       <div className="border border-border rounded-xl overflow-hidden grid grid-cols-4 mb-5 max-[900px]:grid-cols-2">
         <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b max-[900px]:border-r flex flex-col">
@@ -138,7 +164,15 @@ export default function Dashboard(): React.JSX.Element {
           <div className="h-[40px] w-full mt-auto -ml-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparkAnalyzed}>
-                <Area type="monotone" dataKey="val" stroke="var(--sage)" fill="var(--sage)" fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+                <Area
+                  type="monotone"
+                  dataKey="val"
+                  stroke="var(--sage)"
+                  fill="var(--sage)"
+                  fillOpacity={0.1}
+                  strokeWidth={1.5}
+                  isAnimationActive={false}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -150,11 +184,21 @@ export default function Dashboard(): React.JSX.Element {
           <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
             76.8
           </div>
-          <div className="font-mono text-[10px] text-sage mb-2">↑ 2.4% this run</div>
+          <div className="font-mono text-[10px] text-sage mb-2">
+            ↑ 2.4% this run
+          </div>
           <div className="h-[40px] w-full mt-auto -ml-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparkScore}>
-                <Area type="monotone" dataKey="val" stroke="var(--sage)" fill="var(--sage)" fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+                <Area
+                  type="monotone"
+                  dataKey="val"
+                  stroke="var(--sage)"
+                  fill="var(--sage)"
+                  fillOpacity={0.1}
+                  strokeWidth={1.5}
+                  isAnimationActive={false}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -172,7 +216,15 @@ export default function Dashboard(): React.JSX.Element {
           <div className="h-[40px] w-full mt-auto -ml-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparkMatch}>
-                <Area type="monotone" dataKey="val" stroke="var(--parchment-muted)" fill="var(--parchment-muted)" fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+                <Area
+                  type="monotone"
+                  dataKey="val"
+                  stroke="var(--parchment-muted)"
+                  fill="var(--parchment-muted)"
+                  fillOpacity={0.1}
+                  strokeWidth={1.5}
+                  isAnimationActive={false}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -188,7 +240,15 @@ export default function Dashboard(): React.JSX.Element {
           <div className="h-[40px] w-full mt-auto -ml-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparkShortlisted}>
-                <Area type="monotone" dataKey="val" stroke="var(--rose)" fill="var(--rose)" fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+                <Area
+                  type="monotone"
+                  dataKey="val"
+                  stroke="var(--rose)"
+                  fill="var(--rose)"
+                  fillOpacity={0.1}
+                  strokeWidth={1.5}
+                  isAnimationActive={false}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>

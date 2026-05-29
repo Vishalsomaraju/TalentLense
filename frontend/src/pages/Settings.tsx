@@ -13,9 +13,43 @@ export default function Settings(): React.JSX.Element {
     learning: 10,
   });
 
-  const handleSliderChange = (key: keyof typeof weights, value: number) => {
-    // In a real app, this would recalculate to ensure sum = 100, but for demo:
-    setWeights({ ...weights, [key]: value });
+  const handleSliderChange = (changedKey: keyof typeof weights, newValue: number) => {
+    const keys = Object.keys(weights) as (keyof typeof weights)[];
+    const otherKeys = keys.filter(k => k !== changedKey);
+    
+    let oldSum = 0;
+    otherKeys.forEach(k => oldSum += weights[k]);
+    
+    if (oldSum === 0) {
+        const remainder = 100 - newValue;
+        const perOther = Math.floor(remainder / 3);
+        setWeights({
+            ...weights,
+            [changedKey]: newValue,
+            [otherKeys[0]]: perOther,
+            [otherKeys[1]]: perOther,
+            [otherKeys[2]]: remainder - 2 * perOther
+        });
+        return;
+    }
+
+    const ratio = (100 - newValue) / oldSum;
+    
+    const newWeights = { ...weights, [changedKey]: newValue };
+    
+    let currentSum = newValue;
+    for (let i = 0; i < otherKeys.length; i++) {
+        const k = otherKeys[i];
+        if (i === otherKeys.length - 1) {
+            newWeights[k] = 100 - currentSum;
+        } else {
+            const scaled = Math.round(weights[k] * ratio);
+            newWeights[k] = scaled;
+            currentSum += scaled;
+        }
+    }
+    
+    setWeights(newWeights);
   };
 
   const renderGeneral = () => (

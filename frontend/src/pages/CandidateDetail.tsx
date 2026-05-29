@@ -2,6 +2,15 @@ import type React from "react";
 import { Link } from "react-router-dom";
 import { TopNav } from "../components/layout/TopNav";
 import { SignalBar } from "../components/ui/SignalBar";
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from "recharts";
+
+const radarData = [
+  { subject: "PyTorch", A: 95, fullMark: 100 },
+  { subject: "MLOps", A: 85, fullMark: 100 },
+  { subject: "Systems", A: 80, fullMark: 100 },
+  { subject: "NLP", A: 70, fullMark: 100 },
+  { subject: "Research", A: 60, fullMark: 100 },
+];
 
 export default function CandidateDetail(): React.JSX.Element {
   return (
@@ -271,89 +280,24 @@ export default function CandidateDetail(): React.JSX.Element {
               Skill Intelligence
             </div>
             <div className="p-8 flex items-center justify-center min-h-[240px]">
-              <svg
-                width="400"
-                height="220"
-                viewBox="0 0 400 220"
-                className="overflow-visible"
-              >
-                <defs>
-                  <style>
-                    {`
-                      @keyframes radar-grow {
-                        from { transform: scale(0); opacity: 0; }
-                        to { transform: scale(1); opacity: 1; }
-                      }
-                      .radar-poly {
-                        transform-origin: 200px 110px;
-                        animation: radar-grow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-                      }
-                    `}
-                  </style>
-                </defs>
-                {/* Background Grid */}
-                {[0.2, 0.4, 0.6, 0.8, 1].map((scale, i) => {
-                  const r = 80 * scale;
-                  const pts = [
-                    `${200},${110 - r}`,
-                    `${200 + r * 0.951},${110 - r * 0.309}`,
-                    `${200 + r * 0.588},${110 + r * 0.809}`,
-                    `${200 - r * 0.588},${110 + r * 0.809}`,
-                    `${200 - r * 0.951},${110 - r * 0.309}`,
-                  ].join(" ");
-                  return (
-                    <polygon
-                      key={i}
-                      points={pts}
-                      fill="none"
-                      stroke="var(--border-hi)"
-                      strokeWidth="1"
-                      opacity={0.3}
-                    />
-                  );
-                })}
-                {/* Axis Lines */}
-                {[
-                  [200, 30],
-                  [276, 85],
-                  [247, 175],
-                  [153, 175],
-                  [124, 85]
-                ].map((pt, i) => (
-                  <line
-                    key={i}
-                    x1="200"
-                    y1="110"
-                    x2={pt[0]}
-                    y2={pt[1]}
-                    stroke="var(--border-hi)"
-                    strokeWidth="1"
-                    opacity={0.5}
+              <ResponsiveContainer width="100%" height={220}>
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                  <PolarGrid stroke="var(--border-hi)" opacity={0.3} />
+                  <PolarAngleAxis 
+                    dataKey="subject" 
+                    tick={{ fill: "var(--text-secondary)", fontSize: 11, fontFamily: "monospace" }} 
                   />
-                ))}
-                
-                {/* Data Polygon */}
-                <polygon
-                  points="200,42 257,91 228,149 162,162 131,88"
-                  fill="var(--sage)"
-                  fillOpacity="0.3"
-                  stroke="var(--sage)"
-                  strokeWidth="2"
-                  className="radar-poly"
-                />
-                <circle cx="200" cy="42" r="4" fill="var(--sage)" className="radar-poly" />
-                <circle cx="257" cy="91" r="4" fill="var(--sage)" className="radar-poly" />
-                <circle cx="228" cy="149" r="4" fill="var(--sage)" className="radar-poly" />
-                <circle cx="162" cy="162" r="4" fill="var(--sage)" className="radar-poly" />
-                <circle cx="131" cy="88" r="4" fill="var(--sage)" className="radar-poly" />
-
-                {/* Labels */}
-                <text x="200" y="20" fill="var(--text-primary)" fontSize="11" textAnchor="middle" fontFamily="monospace">PyTorch Depth</text>
-                <text x="286" y="85" fill="var(--text-secondary)" fontSize="11" textAnchor="start" fontFamily="monospace">MLOps</text>
-                <text x="257" y="195" fill="var(--text-secondary)" fontSize="11" textAnchor="middle" fontFamily="monospace">Systems</text>
-                <text x="143" y="195" fill="var(--text-secondary)" fontSize="11" textAnchor="middle" fontFamily="monospace">NLP</text>
-                <text x="114" y="85" fill="var(--text-secondary)" fontSize="11" textAnchor="end" fontFamily="monospace">Research</text>
-              </svg>
+                  <Radar
+                    name="Skills"
+                    dataKey="A"
+                    stroke="var(--sage)"
+                    strokeWidth={2}
+                    fill="var(--sage)"
+                    fillOpacity={0.3}
+                    isAnimationActive={true}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
             </div>
           </section>
         </div>

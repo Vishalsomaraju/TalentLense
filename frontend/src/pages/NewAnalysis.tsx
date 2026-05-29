@@ -48,6 +48,7 @@ export default function NewAnalysis(): React.JSX.Element {
         <div className="mb-10 animate-fade-up">
           <div className="flex items-center justify-between mb-8 relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-px bg-border z-0" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-px bg-parchment z-0 transition-all duration-300" style={{ width: jd.length > 0 && files.length > 0 ? '100%' : (jd.length > 0 || files.length > 0 ? '50%' : '0%') }} />
             
             {/* Step 1 */}
             <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${jd.length > 0 ? 'text-parchment' : 'text-parchment'}`}>
