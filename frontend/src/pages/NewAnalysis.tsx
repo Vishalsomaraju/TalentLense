@@ -1,7 +1,9 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 
 export default function NewAnalysis(): React.JSX.Element {
+  const navigate = useNavigate();
   const [jd, setJd] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -36,15 +38,43 @@ export default function NewAnalysis(): React.JSX.Element {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleRunAnalysis = (): void => {
+    navigate("/analysis/processing");
+  };
+
   return (
     <DashboardLayout>
       <div className="max-w-[900px] mx-auto pt-8 pb-16 px-6">
         <div className="mb-10 animate-fade-up">
-          <div className="font-mono text-[11px] text-parchment-muted uppercase tracking-[0.2em] mb-3">
-            New Analysis
+          <div className="flex items-center justify-between mb-8 relative">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-px bg-border z-0" />
+            
+            {/* Step 1 */}
+            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${jd.length > 0 ? 'text-parchment' : 'text-parchment'}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${jd.length > 0 ? 'bg-parchment text-ink border-parchment' : 'bg-surface-3 border-parchment text-parchment'}`}>
+                1
+              </div>
+              <span className="text-[11px] uppercase tracking-wider font-mono bg-ink px-2">Define Role</span>
+            </div>
+
+            {/* Step 2 */}
+            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${files.length > 0 ? 'text-parchment' : (jd.length > 0 ? 'text-parchment-muted' : 'text-text-muted')}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${files.length > 0 ? 'bg-parchment text-ink border-parchment' : (jd.length > 0 ? 'bg-surface-3 border-parchment-muted text-parchment-muted' : 'bg-surface-2 border-border text-text-muted')}`}>
+                2
+              </div>
+              <span className="text-[11px] uppercase tracking-wider font-mono bg-ink px-2">Upload Resumes</span>
+            </div>
+
+            {/* Step 3 */}
+            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${jd.length > 0 && files.length > 0 ? 'text-parchment' : 'text-text-muted'}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${jd.length > 0 && files.length > 0 ? 'bg-surface-3 border-parchment text-parchment' : 'bg-surface-2 border-border text-text-muted'}`}>
+                3
+              </div>
+              <span className="text-[11px] uppercase tracking-wider font-mono bg-ink px-2">Run Analysis</span>
+            </div>
           </div>
           <h1 className="text-3xl font-light text-text-primary tracking-tight">
-            Define the Role
+            New Analysis
           </h1>
           <p className="text-sm text-text-secondary mt-2 max-w-[60ch]">
             Paste the job description below, then upload candidate resumes to
@@ -171,6 +201,7 @@ export default function NewAnalysis(): React.JSX.Element {
           <div className="pt-6 border-t border-border flex justify-end">
             <button
               type="button"
+              onClick={handleRunAnalysis}
               disabled={!jd || files.length === 0}
               className="bg-parchment text-ink px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-[#cfc0b0] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-parchment transform hover:-translate-y-px active:translate-y-0"
             >

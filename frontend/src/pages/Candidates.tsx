@@ -2,6 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { CandidateRow } from "../components/candidates/CandidateRow";
+import { Search } from "lucide-react";
 import {
   CandidateDrawer,
   type Candidate,
@@ -198,7 +199,7 @@ export default function Candidates(): React.JSX.Element {
             ))
           ) : (
             <div className="flex flex-col items-center justify-center h-[300px] text-text-secondary">
-              <div className="text-4xl mb-3 opacity-20">🔍</div>
+              <Search size={32} className="mb-3 opacity-20 text-text-primary" />
               <p>No candidates found matching your criteria.</p>
             </div>
           )}

@@ -273,137 +273,86 @@ export default function CandidateDetail(): React.JSX.Element {
             <div className="p-8 flex items-center justify-center min-h-[240px]">
               <svg
                 width="400"
-                height="200"
-                viewBox="0 0 400 200"
-                className="opacity-50"
+                height="220"
+                viewBox="0 0 400 220"
+                className="overflow-visible"
               >
-                <line
-                  x1="200"
-                  y1="100"
-                  x2="100"
-                  y2="40"
-                  stroke="var(--border-hi)"
-                  strokeWidth="1"
-                />
-                <line
-                  x1="200"
-                  y1="100"
-                  x2="320"
-                  y2="60"
-                  stroke="var(--border-hi)"
-                  strokeWidth="1"
-                />
-                <line
-                  x1="200"
-                  y1="100"
-                  x2="260"
-                  y2="160"
-                  stroke="var(--border-hi)"
-                  strokeWidth="1"
-                />
-                <line
-                  x1="200"
-                  y1="100"
-                  x2="120"
-                  y2="150"
-                  stroke="var(--border-hi)"
-                  strokeWidth="1"
-                />
-
-                <circle
-                  cx="200"
-                  cy="100"
-                  r="24"
-                  fill="var(--surface-3)"
+                <defs>
+                  <style>
+                    {`
+                      @keyframes radar-grow {
+                        from { transform: scale(0); opacity: 0; }
+                        to { transform: scale(1); opacity: 1; }
+                      }
+                      .radar-poly {
+                        transform-origin: 200px 110px;
+                        animation: radar-grow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                      }
+                    `}
+                  </style>
+                </defs>
+                {/* Background Grid */}
+                {[0.2, 0.4, 0.6, 0.8, 1].map((scale, i) => {
+                  const r = 80 * scale;
+                  const pts = [
+                    `${200},${110 - r}`,
+                    `${200 + r * 0.951},${110 - r * 0.309}`,
+                    `${200 + r * 0.588},${110 + r * 0.809}`,
+                    `${200 - r * 0.588},${110 + r * 0.809}`,
+                    `${200 - r * 0.951},${110 - r * 0.309}`,
+                  ].join(" ");
+                  return (
+                    <polygon
+                      key={i}
+                      points={pts}
+                      fill="none"
+                      stroke="var(--border-hi)"
+                      strokeWidth="1"
+                      opacity={0.3}
+                    />
+                  );
+                })}
+                {/* Axis Lines */}
+                {[
+                  [200, 30],
+                  [276, 85],
+                  [247, 175],
+                  [153, 175],
+                  [124, 85]
+                ].map((pt, i) => (
+                  <line
+                    key={i}
+                    x1="200"
+                    y1="110"
+                    x2={pt[0]}
+                    y2={pt[1]}
+                    stroke="var(--border-hi)"
+                    strokeWidth="1"
+                    opacity={0.5}
+                  />
+                ))}
+                
+                {/* Data Polygon */}
+                <polygon
+                  points="200,42 257,91 228,149 162,162 131,88"
+                  fill="var(--sage)"
+                  fillOpacity="0.3"
                   stroke="var(--sage)"
                   strokeWidth="2"
+                  className="radar-poly"
                 />
-                <text
-                  x="200"
-                  y="104"
-                  fill="var(--text-primary)"
-                  fontSize="10"
-                  textAnchor="middle"
-                  fontFamily="monospace"
-                >
-                  ML
-                </text>
+                <circle cx="200" cy="42" r="4" fill="var(--sage)" className="radar-poly" />
+                <circle cx="257" cy="91" r="4" fill="var(--sage)" className="radar-poly" />
+                <circle cx="228" cy="149" r="4" fill="var(--sage)" className="radar-poly" />
+                <circle cx="162" cy="162" r="4" fill="var(--sage)" className="radar-poly" />
+                <circle cx="131" cy="88" r="4" fill="var(--sage)" className="radar-poly" />
 
-                <circle
-                  cx="100"
-                  cy="40"
-                  r="16"
-                  fill="var(--surface-2)"
-                  stroke="var(--border-hi)"
-                  strokeWidth="1"
-                />
-                <text
-                  x="100"
-                  y="44"
-                  fill="var(--text-secondary)"
-                  fontSize="9"
-                  textAnchor="middle"
-                  fontFamily="monospace"
-                >
-                  PyT
-                </text>
-
-                <circle
-                  cx="320"
-                  cy="60"
-                  r="20"
-                  fill="var(--surface-2)"
-                  stroke="var(--border-hi)"
-                  strokeWidth="1"
-                />
-                <text
-                  x="320"
-                  y="64"
-                  fill="var(--text-secondary)"
-                  fontSize="9"
-                  textAnchor="middle"
-                  fontFamily="monospace"
-                >
-                  K8s
-                </text>
-
-                <circle
-                  cx="260"
-                  cy="160"
-                  r="14"
-                  fill="var(--surface-2)"
-                  stroke="var(--border-hi)"
-                  strokeWidth="1"
-                />
-                <text
-                  x="260"
-                  y="164"
-                  fill="var(--text-secondary)"
-                  fontSize="9"
-                  textAnchor="middle"
-                  fontFamily="monospace"
-                >
-                  SQL
-                </text>
-
-                <circle
-                  cx="120"
-                  cy="150"
-                  r="18"
-                  fill="var(--surface-2)"
-                  stroke="var(--border-hi)"
-                  strokeWidth="1"
-                />
-                <text
-                  x="120"
-                  y="154"
-                  fill="var(--text-secondary)"
-                  fontSize="9"
-                  textAnchor="middle"
-                  fontFamily="monospace"
-                >
-                  Ops
-                </text>
+                {/* Labels */}
+                <text x="200" y="20" fill="var(--text-primary)" fontSize="11" textAnchor="middle" fontFamily="monospace">PyTorch Depth</text>
+                <text x="286" y="85" fill="var(--text-secondary)" fontSize="11" textAnchor="start" fontFamily="monospace">MLOps</text>
+                <text x="257" y="195" fill="var(--text-secondary)" fontSize="11" textAnchor="middle" fontFamily="monospace">Systems</text>
+                <text x="143" y="195" fill="var(--text-secondary)" fontSize="11" textAnchor="middle" fontFamily="monospace">NLP</text>
+                <text x="114" y="85" fill="var(--text-secondary)" fontSize="11" textAnchor="end" fontFamily="monospace">Research</text>
               </svg>
             </div>
           </section>

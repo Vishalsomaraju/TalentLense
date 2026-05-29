@@ -1,5 +1,6 @@
 import type React from "react";
 import { NavLink } from "react-router-dom";
+import { LayoutDashboard, Users, Target, LineChart, Settings } from "lucide-react";
 
 export function Sidebar(): React.JSX.Element {
   return (
@@ -19,7 +20,7 @@ export function Sidebar(): React.JSX.Element {
             }`
           }
         >
-          <span className="max-[900px]:hidden">⊞</span> Dashboard
+          <LayoutDashboard size={14} className="max-[900px]:hidden text-text-muted" /> Dashboard
         </NavLink>
         <NavLink
           to="/candidates"
@@ -31,7 +32,7 @@ export function Sidebar(): React.JSX.Element {
             }`
           }
         >
-          <span className="max-[900px]:hidden">⊟</span> Candidates
+          <Users size={14} className="max-[900px]:hidden text-text-muted" /> Candidates
         </NavLink>
         <NavLink
           to="/analysis/new"
@@ -43,7 +44,7 @@ export function Sidebar(): React.JSX.Element {
             }`
           }
         >
-          <span className="max-[900px]:hidden">◈</span> Analysis
+          <Target size={14} className="max-[900px]:hidden text-text-muted" /> Analysis
         </NavLink>
         <NavLink
           to="/reports"
@@ -55,7 +56,7 @@ export function Sidebar(): React.JSX.Element {
             }`
           }
         >
-          <span className="max-[900px]:hidden">↗</span> Reports
+          <LineChart size={14} className="max-[900px]:hidden text-text-muted" /> Reports
         </NavLink>
         <NavLink
           to="/settings"
@@ -67,7 +68,7 @@ export function Sidebar(): React.JSX.Element {
             }`
           }
         >
-          <span className="max-[900px]:hidden">⚙</span> Settings
+          <Settings size={14} className="max-[900px]:hidden text-text-muted" /> Settings
         </NavLink>
       </nav>
 

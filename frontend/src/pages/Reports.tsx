@@ -2,10 +2,46 @@ import type React from "react";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { SignalBar } from "../components/candidates/SignalBar";
 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
+
+const scoreData = [
+  { name: "<70", count: 640, fill: "var(--rose)" },
+  { name: "70-79", count: 410, fill: "var(--sand)" },
+  { name: "80-89", count: 156, fill: "var(--sage)" },
+  { name: "90-100", count: 42, fill: "var(--sage)" },
+];
+
+const trendData = [
+  { name: "R1", score: 71 },
+  { name: "R2", score: 73 },
+  { name: "R3", score: 72 },
+  { name: "R4", score: 75 },
+  { name: "R5", score: 74 },
+  { name: "R6", score: 76.2 },
+  { name: "R7", score: 76.8 },
+];
+
+const funnelData = [
+  { stage: "Screening", count: 1248, percentage: 100, color: "var(--surface-3)" },
+  { stage: "Interview", count: 312, percentage: 25, color: "var(--border-hi)" },
+  { stage: "Shortlisted", count: 64, percentage: 5, color: "var(--sand)" },
+  { stage: "Offer", count: 12, percentage: 1, color: "var(--sage)" },
+];
+
 export default function Reports(): React.JSX.Element {
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-end mb-6">
+      <div className="flex justify-between items-end mb-6 max-[600px]:flex-col max-[600px]:items-start max-[600px]:gap-4">
         <div>
           <h1 className="text-2xl font-light text-parchment m-0">Reports & Analytics</h1>
           <p className="text-sm text-text-secondary mt-1 m-0">
@@ -53,51 +89,69 @@ export default function Reports(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-2 gap-5 max-[900px]:grid-cols-1 mb-5">
+        
+        {/* Score Distribution */}
         <div className="bg-surface border border-border rounded-xl p-5">
-          <h2 className="text-base font-medium text-text-primary mb-4 m-0">Score Distribution</h2>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-text-secondary">Exceptional (90-100)</span>
-                <span className="font-mono text-parchment-muted">42</span>
-              </div>
-              <div className="h-1.5 w-full bg-surface-2 rounded-full overflow-hidden">
-                <div className="h-full bg-sage rounded-full" style={{ width: "12%" }} />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-text-secondary">Strong (80-89)</span>
-                <span className="font-mono text-parchment-muted">156</span>
-              </div>
-              <div className="h-1.5 w-full bg-surface-2 rounded-full overflow-hidden">
-                <div className="h-full bg-sage rounded-full" style={{ width: "28%" }} />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-text-secondary">Average (70-79)</span>
-                <span className="font-mono text-parchment-muted">410</span>
-              </div>
-              <div className="h-1.5 w-full bg-surface-2 rounded-full overflow-hidden">
-                <div className="h-full bg-sand rounded-full" style={{ width: "45%" }} />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-text-secondary">Below Target (&lt;70)</span>
-                <span className="font-mono text-parchment-muted">640</span>
-              </div>
-              <div className="h-1.5 w-full bg-surface-2 rounded-full overflow-hidden">
-                <div className="h-full bg-rose rounded-full" style={{ width: "65%" }} />
-              </div>
-            </div>
+          <h2 className="text-base font-medium text-text-primary mb-6 m-0">Score Distribution</h2>
+          <div className="h-[200px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={scoreData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} dy={10} />
+                <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  cursor={{ fill: 'var(--surface-3)' }}
+                  contentStyle={{ backgroundColor: 'var(--ink)', borderColor: 'var(--border-hi)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px' }}
+                />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
+        {/* Avg Score Trend */}
         <div className="bg-surface border border-border rounded-xl p-5">
-          <h2 className="text-base font-medium text-text-primary mb-4 m-0">Signal Consistency</h2>
-          <div className="space-y-4">
+          <h2 className="text-base font-medium text-text-primary mb-6 m-0">Average Score Trend</h2>
+          <div className="h-[200px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={trendData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} dy={10} />
+                <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} domain={['dataMin - 2', 'dataMax + 2']} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'var(--ink)', borderColor: 'var(--border-hi)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px' }}
+                />
+                <Line type="monotone" dataKey="score" stroke="var(--sage)" strokeWidth={2} dot={{ r: 4, fill: 'var(--surface)', stroke: 'var(--sage)', strokeWidth: 2 }} activeDot={{ r: 6 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Pipeline Funnel */}
+        <div className="bg-surface border border-border rounded-xl p-5">
+          <h2 className="text-base font-medium text-text-primary mb-6 m-0">Pipeline Funnel</h2>
+          <div className="flex flex-col h-[200px] justify-between pb-2">
+            {funnelData.map((stage, i) => (
+              <div key={i} className="flex flex-col gap-1">
+                <div className="flex justify-between items-end text-xs">
+                  <span className="text-text-secondary">{stage.stage}</span>
+                  <span className="font-mono text-parchment-muted">{stage.count}</span>
+                </div>
+                <div className="w-full h-4 bg-surface-2 rounded-sm overflow-hidden flex justify-center">
+                  <div 
+                    className="h-full rounded-sm transition-all duration-700" 
+                    style={{ width: `${stage.percentage}%`, backgroundColor: stage.color }} 
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Signal Consistency */}
+        <div className="bg-surface border border-border rounded-xl p-5">
+          <h2 className="text-base font-medium text-text-primary mb-6 m-0">Signal Consistency</h2>
+          <div className="space-y-5">
             <SignalBar label="Semantic Match" value={84} />
             <SignalBar label="Career Trajectory" value={76} />
             <SignalBar label="Project Impact" value={68} />

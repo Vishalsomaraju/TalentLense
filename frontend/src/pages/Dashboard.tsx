@@ -91,53 +91,107 @@ const MOCK_CANDIDATES: Candidate[] = [
   },
 ];
 
+import { AreaChart, Area, ResponsiveContainer } from "recharts";
+import { List, Grid } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+
+const sparkAnalyzed = [
+  { val: 14 }, { val: 16 }, { val: 18 }, { val: 17 }, { val: 20 }, { val: 22 }, { val: 24 }
+];
+const sparkScore = [
+  { val: 72 }, { val: 74 }, { val: 71 }, { val: 75 }, { val: 76 }, { val: 74 }, { val: 76.8 }
+];
+const sparkMatch = [
+  { val: 82 }, { val: 84 }, { val: 84 }, { val: 88 }, { val: 86 }, { val: 90 }, { val: 91 }
+];
+const sparkShortlisted = [
+  { val: 2 }, { val: 3 }, { val: 4 }, { val: 3 }, { val: 5 }, { val: 4 }, { val: 6 }
+];
+
 export default function Dashboard(): React.JSX.Element {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null,
   );
+  
+  const [searchParams] = useSearchParams();
+  const jobParam = searchParams.get("job");
+  const jobTitle = jobParam 
+    ? jobParam.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
+    : "Senior ML Engineer";
 
   return (
     <DashboardLayout>
+      <div className="mb-4 text-[13px] text-text-secondary font-medium tracking-wide">
+        {jobTitle} <span className="text-border-hi mx-1.5">•</span> May 28, 2025 <span className="text-border-hi mx-1.5">•</span> 24 candidates analyzed.
+      </div>
       <div className="border border-border rounded-xl overflow-hidden grid grid-cols-4 mb-5 max-[900px]:grid-cols-2">
-        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b max-[900px]:border-r">
+        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b max-[900px]:border-r flex flex-col">
           <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.15em]">
             ANALYZED
           </div>
           <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
             24
           </div>
-          <div className="font-mono text-[10px] text-sage">
+          <div className="font-mono text-[10px] text-sage mb-2">
             ↑ 8 from last week
           </div>
+          <div className="h-[40px] w-full mt-auto -ml-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={sparkAnalyzed}>
+                <Area type="monotone" dataKey="val" stroke="var(--sage)" fill="var(--sage)" fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b max-[900px]:border-r-0">
+        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b max-[900px]:border-r-0 flex flex-col">
           <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.15em]">
             AVG SCORE
           </div>
           <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
             76.8
           </div>
-          <div className="font-mono text-[10px] text-sage">↑ 2.4% this run</div>
+          <div className="font-mono text-[10px] text-sage mb-2">↑ 2.4% this run</div>
+          <div className="h-[40px] w-full mt-auto -ml-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={sparkScore}>
+                <Area type="monotone" dataKey="val" stroke="var(--sage)" fill="var(--sage)" fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b-0 max-[900px]:border-r">
+        <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b-0 max-[900px]:border-r flex flex-col">
           <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.15em]">
             TOP MATCH
           </div>
           <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
             91%
           </div>
-          <div className="font-mono text-[10px] text-text-muted">
+          <div className="font-mono text-[10px] text-text-muted mb-2">
             → Aditya Rao
           </div>
+          <div className="h-[40px] w-full mt-auto -ml-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={sparkMatch}>
+                <Area type="monotone" dataKey="val" stroke="var(--parchment-muted)" fill="var(--parchment-muted)" fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        <div className="p-4 px-5 bg-surface">
+        <div className="p-4 px-5 bg-surface flex flex-col">
           <div className="font-mono text-[9px] text-text-muted uppercase tracking-[0.15em]">
             SHORTLISTED
           </div>
           <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
             6
           </div>
-          <div className="font-mono text-[10px] text-rose">↓ 2 passed</div>
+          <div className="font-mono text-[10px] text-rose mb-2">↓ 2 passed</div>
+          <div className="h-[40px] w-full mt-auto -ml-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={sparkShortlisted}>
+                <Area type="monotone" dataKey="val" stroke="var(--rose)" fill="var(--rose)" fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
@@ -158,11 +212,11 @@ export default function Dashboard(): React.JSX.Element {
                 <option>Experience</option>
               </select>
               <div className="flex gap-1">
-                <button className="w-7 h-7 rounded-md border-none bg-border-hi text-text-primary text-base cursor-pointer flex items-center justify-center">
-                  ≡
+                <button className="w-7 h-7 rounded-md border-none bg-border-hi text-text-primary cursor-pointer flex items-center justify-center">
+                  <List size={14} />
                 </button>
-                <button className="w-7 h-7 rounded-md border-none bg-transparent text-text-secondary text-base cursor-pointer flex items-center justify-center">
-                  ⊞
+                <button className="w-7 h-7 rounded-md border-none bg-transparent text-text-secondary cursor-pointer flex items-center justify-center hover:bg-surface-3 transition-colors">
+                  <Grid size={14} />
                 </button>
               </div>
             </div>

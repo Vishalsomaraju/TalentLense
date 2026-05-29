@@ -1,6 +1,9 @@
 import type React from "react";
 import { useEffect } from "react";
 import { CandidateSignal } from "./CandidateRow";
+import { ChevronRight, X, UserCheck, UserMinus } from "lucide-react";
+import { SignalBar } from "./SignalBar";
+import { Badge } from "../ui/Badge";
 
 export interface Candidate {
   id: string;
@@ -63,15 +66,18 @@ export function CandidateDrawer({
           : "translate-x-full max-[900px]:translate-y-full"
       }`}
     >
-      <div className="h-12 bg-surface-2 border-b border-border px-4 flex justify-between items-center shrink-0">
-        <div className="text-sm font-medium text-text-primary">
-          {candidate.name}
+      <div className="h-14 bg-surface-2 border-b border-border px-4 flex justify-between items-center shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="text-sm font-medium text-text-primary">
+            {candidate.name}
+          </div>
+          <Badge stage={candidate.stage} />
         </div>
         <button
           onClick={() => { onClose(); }}
-          className="bg-transparent border-none text-text-muted text-xl cursor-pointer leading-none p-1 hover:text-text-primary transition-colors"
+          className="bg-transparent border-none text-text-muted cursor-pointer p-1.5 hover:text-text-primary hover:bg-surface-3 rounded-md transition-colors"
         >
-          ×
+          <X size={18} />
         </button>
       </div>
 
@@ -90,29 +96,17 @@ export function CandidateDrawer({
           </div>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-8 grid grid-cols-1 gap-y-4">
           {candidate.signals.map((sig, i) => {
-            const barColor =
-              sig.value >= 85
-                ? "bg-sage"
-                : sig.value >= 70
-                ? "bg-sand"
-                : "bg-rose";
+            const colorVariant = sig.value >= 85 ? "sage" : sig.value >= 70 ? "sand" : "rose";
             return (
-              <div key={i} className="flex items-center mb-2">
-                <div className="text-xs text-text-secondary w-[120px]">
-                  {sig.label}
-                </div>
-                <div className="flex-1 h-[6px] bg-border rounded-full overflow-hidden mx-3">
-                  <div
-                    className={`h-full rounded-full ${barColor}`}
-                    style={{ width: `${String(sig.value)}%` }}
-                  />
-                </div>
-                <div className="font-mono text-xs text-parchment-muted w-6 text-right">
-                  {sig.value}
-                </div>
-              </div>
+              <SignalBar 
+                key={i} 
+                label={sig.label} 
+                value={sig.value} 
+                colorVariant={colorVariant} 
+                delayMs={i * 100} 
+              />
             );
           })}
         </div>
@@ -120,14 +114,14 @@ export function CandidateDrawer({
         <div className="font-mono text-[9px] text-text-muted uppercase mb-3 tracking-[0.1em]">
           AI REASONING
         </div>
-        <div className="mb-6">
+        <div className="mb-6 space-y-2">
           {candidate.reasoning.map((r, i) => (
             <div
               key={i}
-              className="bg-surface-2 rounded-lg py-2 px-2.5 mb-1.5 text-xs text-text-secondary leading-[1.6] flex gap-1.5"
+              className="bg-surface-2 rounded-lg py-2.5 px-3 text-xs text-text-secondary leading-[1.6] flex gap-2 items-start"
             >
-              <span className="text-parchment-muted font-bold">›</span>
-              {r}
+              <ChevronRight size={14} className="text-parchment-muted shrink-0 mt-[2px]" />
+              <span>{r}</span>
             </div>
           ))}
         </div>
@@ -175,12 +169,14 @@ export function CandidateDrawer({
         </div>
       </div>
 
-      <div className="border-t border-border p-3 px-4 bg-surface shrink-0">
-        <button className="w-full bg-parchment text-ink border-none rounded-lg py-2.5 font-medium text-[13px] cursor-pointer transition-colors duration-150 hover:bg-parchment-dim">
-          Shortlist
+      <div className="border-t border-border p-4 bg-surface shrink-0 flex gap-3">
+        <button className="flex-1 flex justify-center items-center gap-2 bg-transparent text-text-secondary border border-border-hi rounded-lg py-2.5 font-medium text-[13px] cursor-pointer transition-colors hover:border-text-muted hover:text-text-primary">
+          <UserMinus size={16} />
+          <span>Pass</span>
         </button>
-        <button className="w-full bg-transparent text-text-muted border border-transparent rounded-lg py-2.5 font-medium text-[13px] cursor-pointer transition-colors duration-150 mt-2 hover:border-border-hi hover:text-text-primary">
-          Pass
+        <button className="flex-1 flex justify-center items-center gap-2 bg-parchment text-ink border-none rounded-lg py-2.5 font-medium text-[13px] cursor-pointer transition-colors hover:bg-parchment-dim">
+          <UserCheck size={16} />
+          <span>Shortlist</span>
         </button>
       </div>
     </div>
