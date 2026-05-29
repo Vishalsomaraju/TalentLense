@@ -3,7 +3,7 @@ import type React from "react";
 interface SignalBarProps {
   label: string;
   value: number; // 0-100
-  colorVariant?: "sage" | "sand" | "rose" | "parchment-muted" | string;
+  colorVariant?: string;
   delayMs?: number;
   className?: string;
   isDrawer?: boolean;

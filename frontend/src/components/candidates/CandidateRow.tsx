@@ -49,7 +49,7 @@ export function CandidateRow({
     }
   };
 
-  const toggleExpand = (e: React.MouseEvent) => {
+  const toggleExpand = (e: React.MouseEvent): void => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);
   };
@@ -135,7 +135,7 @@ export function CandidateRow({
         <div className="px-14 pb-4 pt-1 grid grid-cols-4 gap-6 animate-fade-in border-t border-surface-3 ml-4 mr-4 mt-2 mb-2">
           {signals.map((sig, i) => {
             const colorVariant = sig.value >= 85 ? "sage" : sig.value >= 70 ? "sand" : "rose";
-            const statusText = `avg ${sig.value} ${sig.value >= 85 ? "↑ high" : sig.value >= 70 ? "→ near target" : "↓ below target"}`;
+            const statusText = `avg ${String(sig.value)} ${sig.value >= 85 ? "↑ high" : sig.value >= 70 ? "→ near target" : "↓ below target"}`;
             return (
               <div key={i} className="flex flex-col gap-2">
                 <SignalBar 

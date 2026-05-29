@@ -106,8 +106,9 @@ export default function Reports(): React.JSX.Element {
                 />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                   {scoreData.map((entry, index) => (
+                    // eslint-disable-next-line @typescript-eslint/no-deprecated
                     <Cell 
-                      key={`cell-${index}`} 
+                      key={`cell-${String(index)}`} 
                       fill={
                         entry.name === "<70" ? "var(--rose)" :
                         entry.name === "70-79" ? "var(--sand)" :
@@ -153,7 +154,7 @@ export default function Reports(): React.JSX.Element {
                 <div className="w-full h-4 bg-surface-2 rounded-sm overflow-hidden flex justify-center">
                   <div 
                     className="h-full rounded-sm transition-all duration-700" 
-                    style={{ width: `${stage.percentage}%`, backgroundColor: stage.color }} 
+                    style={{ width: `${String(stage.percentage)}%`, backgroundColor: stage.color }} 
                   />
                 </div>
               </div>

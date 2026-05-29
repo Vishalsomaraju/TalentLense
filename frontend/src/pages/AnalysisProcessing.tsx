@@ -28,10 +28,10 @@ export default function AnalysisProcessing(): React.JSX.Element {
     // After ~3.5 seconds, navigate to dashboard
     const timeout = setTimeout(() => {
       clearInterval(interval);
-      navigate(ROUTES.DASHBOARD);
+      void navigate(ROUTES.DASHBOARD);
     }, 3500);
 
-    return () => {
+    return (): void => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
@@ -63,7 +63,7 @@ export default function AnalysisProcessing(): React.JSX.Element {
           <div className="w-64 h-1 bg-surface-3 rounded-full mt-2 overflow-hidden">
             <div 
               className="h-full bg-parchment transition-all duration-[3000ms] ease-out rounded-full" 
-              style={{ width: phaseIndex === phases.length - 1 ? '100%' : `${(phaseIndex + 1) * 25}%` }} 
+              style={{ width: phaseIndex === phases.length - 1 ? '100%' : `${String((phaseIndex + 1) * 25)}%` }} 
             />
           </div>
         </div>

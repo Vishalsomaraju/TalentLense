@@ -1,6 +1,6 @@
 import type React from "react";
 import { useEffect } from "react";
-import { Candidate, CandidateSignal } from "@/types";
+import { Candidate } from "@/types";
 import { ChevronRight, X, UserCheck, UserMinus } from "lucide-react";
 import { SignalBar } from "../ui/SignalBar";
 import { Badge } from "../ui/Badge";
@@ -85,7 +85,7 @@ export function CandidateDrawer({
         <div className="mb-8 grid grid-cols-1 gap-y-4">
           {candidate.signals.map((sig, i) => {
             const colorVariant = sig.value >= 85 ? "sage" : sig.value >= 70 ? "sand" : "rose";
-            const statusText = `avg ${sig.value} ${sig.value >= 85 ? "↑ high" : sig.value >= 70 ? "→ near target" : "↓ below target"}`;
+            const statusText = `avg ${String(sig.value)} ${sig.value >= 85 ? "↑ high" : sig.value >= 70 ? "→ near target" : "↓ below target"}`;
             return (
               <SignalBar 
                 key={i} 

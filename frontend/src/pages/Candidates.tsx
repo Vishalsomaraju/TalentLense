@@ -3,10 +3,8 @@ import { useState } from "react";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { CandidateRow } from "../components/candidates/CandidateRow";
 import { Search } from "lucide-react";
-import {
-  CandidateDrawer,
-  type Candidate,
-} from "../components/candidates/CandidateDrawer";
+import { CandidateDrawer } from "../components/candidates/CandidateDrawer";
+import { Candidate } from "@/types";
 
 // Reusing MOCK_CANDIDATES for demonstration, optionally expanding it
 const MOCK_CANDIDATES: Candidate[] = [
@@ -108,8 +106,8 @@ export default function Candidates(): React.JSX.Element {
   );
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredCandidates = MOCK_CANDIDATES.filter(
-    (c) =>
+  const filteredCandidates: Candidate[] = MOCK_CANDIDATES.filter(
+    (c: Candidate) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.role.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -136,7 +134,7 @@ export default function Candidates(): React.JSX.Element {
               type="text"
               placeholder="Search by name, role, or skill..."
               value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setSearchQuery(e.target.value); }}
               className="flex-1 bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm text-text-primary outline-none focus:border-border-hi transition-colors"
             />
           </div>

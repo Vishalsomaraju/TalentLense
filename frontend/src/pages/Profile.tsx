@@ -6,7 +6,7 @@ type ProfileTab = "personal" | "notifications" | "security";
 export default function Profile(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<ProfileTab>("personal");
 
-  const renderPersonalInfo = () => (
+  const renderPersonalInfo = (): React.JSX.Element => (
     <div className="bg-surface border border-border rounded-xl overflow-hidden animate-fade-in">
       {/* Header/Banner */}
       <div className="h-32 bg-surface-2 border-b border-border relative">
@@ -80,7 +80,7 @@ export default function Profile(): React.JSX.Element {
     </div>
   );
 
-  const renderNotifications = () => (
+  const renderNotifications = (): React.JSX.Element => (
     <div className="bg-surface border border-border rounded-xl overflow-hidden animate-fade-in">
       <div className="p-5 border-b border-border">
         <h2 className="text-base font-medium text-text-primary m-0">Notification Preferences</h2>
@@ -91,9 +91,10 @@ export default function Profile(): React.JSX.Element {
         <div>
           <h3 className="text-sm font-medium text-text-primary mb-4">Email Notifications</h3>
           <div className="space-y-4">
-            <label className="flex items-start gap-3 cursor-pointer group">
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="notif-email-1" className="flex items-start gap-3 cursor-pointer group">
               <div className="mt-0.5 relative flex items-center justify-center w-4 h-4 rounded border border-border bg-ink group-hover:border-parchment-dim transition-colors">
-                <input type="checkbox" defaultChecked className="opacity-0 absolute inset-0 cursor-pointer" />
+                <input id="notif-email-1" type="checkbox" defaultChecked className="opacity-0 absolute inset-0 cursor-pointer" />
                 <div className="w-2 h-2 bg-parchment rounded-sm" />
               </div>
               <div>
@@ -101,9 +102,10 @@ export default function Profile(): React.JSX.Element {
                 <div className="text-xs text-text-secondary mt-0.5">Receive an email when a batch of resumes is finished parsing.</div>
               </div>
             </label>
-            <label className="flex items-start gap-3 cursor-pointer group">
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="notif-email-2" className="flex items-start gap-3 cursor-pointer group">
               <div className="mt-0.5 relative flex items-center justify-center w-4 h-4 rounded border border-border bg-ink group-hover:border-parchment-dim transition-colors">
-                <input type="checkbox" defaultChecked className="opacity-0 absolute inset-0 cursor-pointer" />
+                <input id="notif-email-2" type="checkbox" defaultChecked className="opacity-0 absolute inset-0 cursor-pointer" />
                 <div className="w-2 h-2 bg-parchment rounded-sm" />
               </div>
               <div>
@@ -117,9 +119,10 @@ export default function Profile(): React.JSX.Element {
         <div>
           <h3 className="text-sm font-medium text-text-primary mb-4">Push Notifications</h3>
           <div className="space-y-4">
-            <label className="flex items-start gap-3 cursor-pointer group">
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="notif-push-1" className="flex items-start gap-3 cursor-pointer group">
               <div className="mt-0.5 relative flex items-center justify-center w-4 h-4 rounded border border-border bg-ink group-hover:border-parchment-dim transition-colors">
-                <input type="checkbox" defaultChecked className="opacity-0 absolute inset-0 cursor-pointer" />
+                <input id="notif-push-1" type="checkbox" defaultChecked className="opacity-0 absolute inset-0 cursor-pointer" />
                 <div className="w-2 h-2 bg-parchment rounded-sm" />
               </div>
               <div>
@@ -133,7 +136,7 @@ export default function Profile(): React.JSX.Element {
     </div>
   );
 
-  const renderSecurity = () => (
+  const renderSecurity = (): React.JSX.Element => (
     <div className="space-y-6 animate-fade-in">
       <section className="bg-surface border border-border rounded-xl overflow-hidden">
         <div className="p-5 border-b border-border">
@@ -142,15 +145,17 @@ export default function Profile(): React.JSX.Element {
         </div>
         <div className="p-5 space-y-4 bg-surface-2">
           <div>
-            <label className="block text-xs text-text-secondary mb-1.5 uppercase font-mono tracking-wider">Current Password</label>
+            <label htmlFor="current-password" className="block text-xs text-text-secondary mb-1.5 uppercase font-mono tracking-wider">Current Password</label>
             <input 
+              id="current-password"
               type="password" 
               className="w-full max-w-md bg-ink border border-border rounded-lg px-3 py-2 text-sm text-text-primary outline-none focus:border-border-hi transition-colors"
             />
           </div>
           <div>
-            <label className="block text-xs text-text-secondary mb-1.5 uppercase font-mono tracking-wider">New Password</label>
+            <label htmlFor="new-password" className="block text-xs text-text-secondary mb-1.5 uppercase font-mono tracking-wider">New Password</label>
             <input 
+              id="new-password"
               type="password" 
               className="w-full max-w-md bg-ink border border-border rounded-lg px-3 py-2 text-sm text-text-primary outline-none focus:border-border-hi transition-colors"
             />
@@ -212,7 +217,7 @@ export default function Profile(): React.JSX.Element {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as ProfileTab)}
+              onClick={() => { setActiveTab(tab.id as ProfileTab); }}
               className={`text-left px-4 py-2 text-sm rounded-lg transition-colors border-l-2 ${
                 activeTab === tab.id
                   ? "bg-surface-2 text-text-primary border-parchment"

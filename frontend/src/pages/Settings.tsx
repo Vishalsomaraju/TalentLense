@@ -13,7 +13,7 @@ export default function Settings(): React.JSX.Element {
     learning: 10,
   });
 
-  const handleSliderChange = (changedKey: keyof typeof weights, newValue: number) => {
+  const handleSliderChange = (changedKey: keyof typeof weights, newValue: number): void => {
     const keys = Object.keys(weights) as (keyof typeof weights)[];
     const otherKeys = keys.filter(k => k !== changedKey);
     
@@ -52,7 +52,7 @@ export default function Settings(): React.JSX.Element {
     setWeights(newWeights);
   };
 
-  const renderGeneral = () => (
+  const renderGeneral = (): React.JSX.Element => (
     <div className="space-y-6 animate-fade-in">
       <section className="bg-surface border border-border rounded-xl overflow-hidden">
         <div className="p-5 border-b border-border">
@@ -101,7 +101,7 @@ export default function Settings(): React.JSX.Element {
     </div>
   );
 
-  const renderModelConfig = () => (
+  const renderModelConfig = (): React.JSX.Element => (
     <div className="space-y-6 animate-fade-in">
       <section className="bg-surface border border-border rounded-xl overflow-hidden">
         <div className="p-5 border-b border-border flex justify-between items-start">
@@ -130,7 +130,7 @@ export default function Settings(): React.JSX.Element {
                 min="0"
                 max="100"
                 value={weights[slider.key as keyof typeof weights]}
-                onChange={(e) => handleSliderChange(slider.key as keyof typeof weights, parseInt(e.target.value))}
+                onChange={(e) => { handleSliderChange(slider.key as keyof typeof weights, parseInt(e.target.value)); }}
                 className={`w-full accent-${slider.color}`}
               />
             </div>
@@ -154,7 +154,7 @@ export default function Settings(): React.JSX.Element {
     </div>
   );
 
-  const renderTeam = () => (
+  const renderTeam = (): React.JSX.Element => (
     <div className="space-y-6 animate-fade-in">
       <section className="bg-surface border border-border rounded-xl overflow-hidden">
         <div className="p-5 border-b border-border flex justify-between items-center">
@@ -193,7 +193,7 @@ export default function Settings(): React.JSX.Element {
     </div>
   );
 
-  const renderIntegrations = () => (
+  const renderIntegrations = (): React.JSX.Element => (
     <div className="space-y-6 animate-fade-in">
       <section className="bg-surface border border-border rounded-xl overflow-hidden">
         <div className="p-5 border-b border-border flex justify-between items-center">
@@ -221,7 +221,7 @@ export default function Settings(): React.JSX.Element {
     </div>
   );
 
-  const renderBilling = () => (
+  const renderBilling = (): React.JSX.Element => (
     <div className="h-[400px] flex flex-col items-center justify-center text-center animate-fade-in">
       <div className="text-4xl mb-4 opacity-20">💳</div>
       <h2 className="text-xl font-light text-text-primary mb-2">Billing Dashboard</h2>
@@ -257,7 +257,7 @@ export default function Settings(): React.JSX.Element {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as SettingsTab)}
+              onClick={() => { setActiveTab(tab.id as SettingsTab); }}
               className={`text-left px-4 py-2 text-sm rounded-lg transition-colors border-l-2 ${
                 activeTab === tab.id
                   ? "bg-surface-2 text-text-primary border-parchment"

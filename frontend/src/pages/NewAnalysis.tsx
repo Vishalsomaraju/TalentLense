@@ -39,7 +39,7 @@ export default function NewAnalysis(): React.JSX.Element {
   };
 
   const handleRunAnalysis = (): void => {
-    navigate("/analysis/processing");
+    void navigate("/analysis/processing");
   };
 
   return (

@@ -6,9 +6,9 @@ import { ROUTES } from "@/constants";
 export default function Login(): React.JSX.Element {
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.SyntheticEvent): void => {
     e.preventDefault();
-    navigate(ROUTES.DASHBOARD);
+    void navigate(ROUTES.DASHBOARD);
   };
 
   return (
@@ -47,9 +47,9 @@ export default function Login(): React.JSX.Element {
                 <label htmlFor="password" className="block text-xs font-mono tracking-wider text-text-secondary uppercase">
                   Password
                 </label>
-                <a href="#" className="text-xs text-parchment-dim hover:text-parchment transition-colors">
+                <button type="button" className="text-xs text-parchment-dim hover:text-parchment transition-colors">
                   Forgot?
-                </a>
+                </button>
               </div>
               <input
                 id="password"

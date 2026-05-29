@@ -44,7 +44,7 @@ export default function Jobs(): React.JSX.Element {
           </p>
         </div>
         <button 
-          onClick={() => setShowModal(true)}
+          onClick={() => { setShowModal(true); }}
           className="bg-parchment text-ink font-medium px-4 py-2 rounded-lg hover:bg-parchment-dim transition-colors flex items-center gap-2"
         >
           <Plus size={16} /> Create New Job
@@ -87,28 +87,30 @@ export default function Jobs(): React.JSX.Element {
           <div className="bg-surface border border-border rounded-xl w-full max-w-md overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
             <div className="p-5 border-b border-border flex justify-between items-center">
               <h3 className="text-lg font-medium text-text-primary m-0">Create New Job</h3>
-              <button onClick={() => setShowModal(false)} className="text-text-muted hover:text-text-primary text-xl leading-none">&times;</button>
+              <button onClick={() => { setShowModal(false); }} className="text-text-muted hover:text-text-primary text-xl leading-none">&times;</button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="block text-xs text-text-secondary mb-1.5 uppercase font-mono tracking-wider">Role Name</label>
+                <label htmlFor="role-name" className="block text-xs text-text-secondary mb-1.5 uppercase font-mono tracking-wider">Role Name</label>
                 <input 
+                  id="role-name"
                   type="text" 
                   placeholder="e.g. Senior Machine Learning Engineer" 
                   className="w-full bg-ink border border-border rounded-lg px-3 py-2 text-sm text-text-primary outline-none focus:border-border-hi transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs text-text-secondary mb-1.5 uppercase font-mono tracking-wider">Description (Optional)</label>
+                <label htmlFor="role-desc" className="block text-xs text-text-secondary mb-1.5 uppercase font-mono tracking-wider">Description (Optional)</label>
                 <textarea 
+                  id="role-desc"
                   placeholder="Paste job description here..." 
                   className="w-full h-24 resize-none bg-ink border border-border rounded-lg px-3 py-2 text-sm text-text-primary outline-none focus:border-border-hi transition-colors"
                 />
               </div>
             </div>
             <div className="p-4 border-t border-border bg-surface-2 flex justify-end gap-3">
-              <button onClick={() => setShowModal(false)} className="px-4 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors">Cancel</button>
-              <button onClick={() => setShowModal(false)} className="px-4 py-2 text-sm bg-parchment text-ink font-medium rounded-lg hover:bg-parchment-dim transition-colors">Create Job</button>
+              <button onClick={() => { setShowModal(false); }} className="px-4 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors">Cancel</button>
+              <button onClick={() => { setShowModal(false); }} className="px-4 py-2 text-sm bg-parchment text-ink font-medium rounded-lg hover:bg-parchment-dim transition-colors">Create Job</button>
             </div>
           </div>
         </div>
