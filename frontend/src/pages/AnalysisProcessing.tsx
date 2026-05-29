@@ -68,6 +68,5 @@ export default function AnalysisProcessing(): React.JSX.Element {
           </div>
         </div>
       </div>
-    </div>
   );
 }

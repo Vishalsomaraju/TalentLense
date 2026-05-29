@@ -7,9 +7,9 @@
 
 // ── App config ────────────────────────────────────────────────────────────────
 export const APP_CONFIG = {
-  name: "__APP_NAME__",
+  name: "TalentLens",
   version: "1.0.0",
-  supportEmail: "support@example.com",
+  supportEmail: "support@talentlens.ai",
 } as const;
 
 // ── Routes ────────────────────────────────────────────────────────────────────
