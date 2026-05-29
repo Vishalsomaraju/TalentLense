@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { Loader2 } from "lucide-react";
 
 export default function AnalysisProcessing(): React.JSX.Element {
@@ -38,9 +37,8 @@ export default function AnalysisProcessing(): React.JSX.Element {
   }, [navigate, phases.length]);
 
   return (
-    <DashboardLayout>
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] animate-fade-in">
-        <div className="flex flex-col items-center gap-6">
+    <div className="min-h-screen w-full bg-ink flex flex-col items-center justify-center animate-fade-in">
+      <div className="flex flex-col items-center gap-6">
           {/* Animated Spinner */}
           <div className="relative flex items-center justify-center w-24 h-24">
             <div className="absolute inset-0 rounded-full border-2 border-surface-3 animate-ping opacity-20" />
@@ -69,6 +67,6 @@ export default function AnalysisProcessing(): React.JSX.Element {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 }

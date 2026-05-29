@@ -1,6 +1,6 @@
 import type React from "react";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
-import { SignalBar } from "../components/candidates/SignalBar";
+import { SignalBar } from "../components/ui/SignalBar";
 
 import {
   BarChart,
@@ -12,13 +12,14 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
+  Cell,
 } from "recharts";
 
 const scoreData = [
-  { name: "<70", count: 640, fill: "var(--rose)" },
-  { name: "70-79", count: 410, fill: "var(--sand)" },
-  { name: "80-89", count: 156, fill: "var(--sage)" },
-  { name: "90-100", count: 42, fill: "var(--sage)" },
+  { name: "<70", count: 640 },
+  { name: "70-79", count: 410 },
+  { name: "80-89", count: 156 },
+  { name: "90-100", count: 42 },
 ];
 
 const trendData = [
@@ -103,7 +104,19 @@ export default function Reports(): React.JSX.Element {
                   cursor={{ fill: 'var(--surface-3)' }}
                   contentStyle={{ backgroundColor: 'var(--ink)', borderColor: 'var(--border-hi)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px' }}
                 />
-                <Bar dataKey="count" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                  {scoreData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={
+                        entry.name === "<70" ? "var(--rose)" :
+                        entry.name === "70-79" ? "var(--sand)" :
+                        entry.name === "80-89" ? "var(--sage)" :
+                        "rgba(141, 186, 133, 0.95)" // higher opacity/bright sage
+                      } 
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -152,10 +165,10 @@ export default function Reports(): React.JSX.Element {
         <div className="bg-surface border border-border rounded-xl p-5">
           <h2 className="text-base font-medium text-text-primary mb-6 m-0">Signal Consistency</h2>
           <div className="space-y-5">
-            <SignalBar label="Semantic Match" value={84} />
-            <SignalBar label="Career Trajectory" value={76} />
-            <SignalBar label="Project Impact" value={68} />
-            <SignalBar label="Learning Velocity" value={61} />
+            <SignalBar label="Semantic Match" value={84} statusText="avg 84 → near target" showBenchmark />
+            <SignalBar label="Career Trajectory" value={76} statusText="avg 76 → near target" showBenchmark />
+            <SignalBar label="Project Impact" value={68} statusText="avg 68 ↓ below target" showBenchmark />
+            <SignalBar label="Learning Velocity" value={61} statusText="avg 61 ↓ low" showBenchmark />
           </div>
         </div>
       </div>

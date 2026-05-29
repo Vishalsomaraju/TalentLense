@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState } from "react";
 import { Badge } from "../ui/Badge";
-import { SignalBar } from "./SignalBar";
+import { SignalBar } from "../ui/SignalBar";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 export interface CandidateSignal {
@@ -138,13 +138,16 @@ export function CandidateRow({
         <div className="px-14 pb-4 pt-1 grid grid-cols-4 gap-6 animate-fade-in border-t border-surface-3 ml-4 mr-4 mt-2 mb-2">
           {signals.map((sig, i) => {
             const colorVariant = sig.value >= 85 ? "sage" : sig.value >= 70 ? "sand" : "rose";
+            const statusText = `avg ${sig.value} ${sig.value >= 85 ? "↑ high" : sig.value >= 70 ? "→ near target" : "↓ below target"}`;
             return (
               <div key={i} className="flex flex-col gap-2">
                 <SignalBar 
                   label={sig.label} 
                   value={sig.value} 
                   colorVariant={colorVariant} 
-                  delayMs={i * 100} 
+                  delayMs={i * 100}
+                  statusText={statusText}
+                  showBenchmark
                 />
               </div>
             );

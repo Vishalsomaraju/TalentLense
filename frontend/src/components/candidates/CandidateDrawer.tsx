@@ -2,7 +2,7 @@ import type React from "react";
 import { useEffect } from "react";
 import { CandidateSignal } from "./CandidateRow";
 import { ChevronRight, X, UserCheck, UserMinus } from "lucide-react";
-import { SignalBar } from "./SignalBar";
+import { SignalBar } from "../ui/SignalBar";
 import { Badge } from "../ui/Badge";
 
 export interface Candidate {
@@ -99,13 +99,16 @@ export function CandidateDrawer({
         <div className="mb-8 grid grid-cols-1 gap-y-4">
           {candidate.signals.map((sig, i) => {
             const colorVariant = sig.value >= 85 ? "sage" : sig.value >= 70 ? "sand" : "rose";
+            const statusText = `avg ${sig.value} ${sig.value >= 85 ? "↑ high" : sig.value >= 70 ? "→ near target" : "↓ below target"}`;
             return (
               <SignalBar 
                 key={i} 
                 label={sig.label} 
                 value={sig.value} 
                 colorVariant={colorVariant} 
-                delayMs={i * 100} 
+                delayMs={i * 100}
+                statusText={statusText}
+                showBenchmark
               />
             );
           })}
