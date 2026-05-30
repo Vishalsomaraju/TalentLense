@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { useAnalysis } from "@/context/AnalysisContext";
 import { rankCandidates } from "@/services/api";
+import { useJD } from "@/hooks/useJD";
 
 export default function NewAnalysis(): React.JSX.Element {
   const navigate = useNavigate();
   const { setPendingAnalysis, weights, reset } = useAnalysis();
-  const [jd, setJd] = useState("");
+  const { jd, updateJD, isValid } = useJD();
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,7 +116,7 @@ export default function NewAnalysis(): React.JSX.Element {
               id="jd-input"
               value={jd}
               onChange={(e) => {
-                setJd(e.target.value);
+                updateJD(e.target.value);
               }}
               placeholder="e.g. We are looking for a Senior Machine Learning Engineer with experience in PyTorch..."
               className="w-full h-48 bg-surface-2 border border-border rounded-xl p-4 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-parchment-dim transition-colors resize-none"
@@ -217,7 +218,7 @@ export default function NewAnalysis(): React.JSX.Element {
             <button
               type="button"
               onClick={handleRunAnalysis}
-              disabled={isLoading || !jd.trim() || files.length === 0}
+              disabled={isLoading || !isValid || files.length === 0}
               className="bg-parchment text-ink px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-[#cfc0b0] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-parchment transform hover:-translate-y-px active:translate-y-0"
             >
               {isLoading ? "Starting Analysis..." : "Run AI Analysis"}
