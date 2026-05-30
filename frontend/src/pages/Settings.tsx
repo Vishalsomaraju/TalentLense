@@ -1,55 +1,28 @@
 import React, { useState } from "react";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
+import { useAnalysis } from "@/context/AnalysisContext";
+import { AnalysisWeights } from "@/types";
 
 type SettingsTab = "general" | "model" | "team" | "integrations" | "billing";
 
 export default function Settings(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<SettingsTab>("general");
 
-  const [weights, setWeights] = useState({
-    semantic: 40,
-    career: 30,
-    impact: 20,
-    learning: 10,
-  });
+  const { weights, setWeights } = useAnalysis();
 
-  const handleSliderChange = (changedKey: keyof typeof weights, newValue: number): void => {
-    const keys = Object.keys(weights) as (keyof typeof weights)[];
-    const otherKeys = keys.filter(k => k !== changedKey);
-    
-    let oldSum = 0;
-    otherKeys.forEach(k => oldSum += weights[k]);
-    
-    if (oldSum === 0) {
-        const remainder = 100 - newValue;
-        const perOther = Math.floor(remainder / 3);
-        setWeights({
-            ...weights,
-            [changedKey]: newValue,
-            [otherKeys[0]]: perOther,
-            [otherKeys[1]]: perOther,
-            [otherKeys[2]]: remainder - 2 * perOther
-        });
-        return;
+  const handleWeightChange = (key: keyof AnalysisWeights, newVal: number) => {
+    const remaining = 1 - newVal;
+    const others = Object.keys(weights).filter(k => k !== key) as (keyof AnalysisWeights)[];
+    const currentOtherSum = others.reduce((s, k) => s + weights[k], 0);
+    const normalized = { ...weights, [key]: newVal };
+    if (currentOtherSum > 0) {
+      others.forEach(k => {
+        normalized[k] = (weights[k] / currentOtherSum) * remaining;
+      });
+    } else {
+      others.forEach(k => { normalized[k] = remaining / 3; });
     }
-
-    const ratio = (100 - newValue) / oldSum;
-    
-    const newWeights = { ...weights, [changedKey]: newValue };
-    
-    let currentSum = newValue;
-    for (let i = 0; i < otherKeys.length; i++) {
-        const k = otherKeys[i];
-        if (i === otherKeys.length - 1) {
-            newWeights[k] = 100 - currentSum;
-        } else {
-            const scaled = Math.round(weights[k] * ratio);
-            newWeights[k] = scaled;
-            currentSum += scaled;
-        }
-    }
-    
-    setWeights(newWeights);
+    setWeights(normalized);
   };
 
   const renderGeneral = (): React.JSX.Element => (
@@ -101,42 +74,60 @@ export default function Settings(): React.JSX.Element {
     </div>
   );
 
-  const renderModelConfig = (): React.JSX.Element => (
-    <div className="space-y-6 animate-fade-in">
-      <section className="bg-surface border border-border rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-border flex justify-between items-start">
-          <div>
-            <h2 className="text-base font-medium text-text-primary m-0">Signal Weights</h2>
-            <p className="text-xs text-text-secondary mt-1">Adjust the importance of different signals. Rankings will update live.</p>
-          </div>
-          <div className="font-mono text-xs text-sage bg-[rgba(141,186,133,0.1)] px-2 py-1 rounded">
-            Total: {weights.semantic + weights.career + weights.impact + weights.learning}%
-          </div>
-        </div>
-        <div className="p-6 space-y-8 bg-surface-2">
-          {[
-            { key: "semantic", label: "Semantic Match", color: "sage" },
-            { key: "career", label: "Career Trajectory", color: "parchment" },
-            { key: "impact", label: "Project Impact", color: "sand" },
-            { key: "learning", label: "Learning Velocity", color: "rose" },
-          ].map((slider) => (
-            <div key={slider.key}>
-              <div className="flex justify-between items-center mb-3">
-                <label className="text-sm font-medium text-text-primary">{slider.label}</label>
-                <span className={`font-mono text-xs text-${slider.color}`}>{weights[slider.key as keyof typeof weights]}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={weights[slider.key as keyof typeof weights]}
-                onChange={(e) => { handleSliderChange(slider.key as keyof typeof weights, parseInt(e.target.value)); }}
-                className={`w-full accent-${slider.color}`}
-              />
+  const renderModelConfig = (): React.JSX.Element => {
+    const totalPercentage = Math.round((weights.semantic + weights.trajectory + weights.impact + weights.velocity) * 100);
+    const isExactSum = totalPercentage === 100;
+
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <section className="bg-surface border border-border rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-border flex justify-between items-start">
+            <div>
+              <h2 className="text-base font-medium text-text-primary m-0">Signal Weights</h2>
+              <p className="text-xs text-text-secondary mt-1">Adjust the importance of different signals. Rankings will update live.</p>
             </div>
-          ))}
-        </div>
-      </section>
+            <div className={`font-mono text-xs ${isExactSum ? 'text-sage bg-[rgba(141,186,133,0.1)]' : 'text-sand bg-[rgba(235,210,136,0.1)]'} px-2 py-1 rounded`}>
+              Total: {isExactSum ? '100%' : '~100%'}
+            </div>
+          </div>
+          <div className="p-6 space-y-8 bg-surface-2">
+            {[
+              { key: "semantic", label: "Semantic Match", color: "sage" },
+              { key: "trajectory", label: "Career Trajectory", color: "parchment" },
+              { key: "impact", label: "Project Impact", color: "sand" },
+              { key: "velocity", label: "Learning Velocity", color: "rose" },
+            ].map((slider) => {
+              const val = weights[slider.key as keyof AnalysisWeights];
+              const pct = Math.round(val * 100);
+              return (
+                <div key={slider.key}>
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-sm font-medium text-text-primary">{slider.label}</label>
+                    <span className={`font-mono text-xs text-${slider.color}`}>{pct}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={pct}
+                    onChange={(e) => { handleWeightChange(slider.key as keyof AnalysisWeights, parseInt(e.target.value) / 100); }}
+                    className={`w-full accent-${slider.color}`}
+                  />
+                </div>
+              );
+            })}
+            
+            <div className="pt-4 border-t border-border flex justify-end">
+              <button 
+                type="button"
+                onClick={() => setWeights({ semantic: 0.35, trajectory: 0.25, impact: 0.25, velocity: 0.15 })}
+                className="text-xs font-mono text-text-secondary hover:text-text-primary transition-colors cursor-pointer bg-transparent border-none"
+              >
+                Reset to defaults
+              </button>
+            </div>
+          </div>
+        </section>
 
       <section className="bg-surface border border-border rounded-xl overflow-hidden">
         <div className="p-5 border-b border-border">
@@ -153,6 +144,7 @@ export default function Settings(): React.JSX.Element {
       </section>
     </div>
   );
+};
 
   const renderTeam = (): React.JSX.Element => (
     <div className="space-y-6 animate-fade-in">

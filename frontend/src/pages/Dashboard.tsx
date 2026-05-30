@@ -3,7 +3,8 @@ import { useState } from "react";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { CandidateRow } from "../components/candidates/CandidateRow";
 import { CandidateDrawer } from "../components/candidates/CandidateDrawer";
-import { Candidate } from "@/types";
+import { Candidate, RankingResponse } from "@/types";
+import { useAnalysis } from "@/context/AnalysisContext";
 
 const MOCK_CANDIDATES: Candidate[] = [
   {
@@ -11,83 +12,108 @@ const MOCK_CANDIDATES: Candidate[] = [
     rank: 1,
     initials: "AR",
     name: "Aditya Rao",
-    role: "Senior ML Engineer · 5yr",
-    score: 91,
+    current_role: "Senior ML Engineer · 5yr",
+    experience_years: 5,
+    overall_score: 91,
+    confidence: 87,
+    summary: "Strong PyTorch depth with production deployment experience.",
     signals: [
-      { label: "Semantic", value: 94 },
-      { label: "Trajectory", value: 88 },
-      { label: "Impact", value: 82 },
-      { label: "Velocity", value: 64 },
+      { label: "Semantic", value: 94, explanation: "High keyword overlap with JD." },
+      { label: "Trajectory", value: 88, explanation: "Consistent promotions to Senior." },
+      { label: "Impact", value: 82, explanation: "Led major model rewrites." },
+      { label: "Velocity", value: 64, explanation: "Steady learning pace." },
     ],
     skills: ["PyTorch", "MLOps"],
     stage: "Shortlisted",
-    reasoning: [
+    green_flags: [
       "Strong PyTorch depth with production deployment experience.",
       "Career arc shows deliberate ML platform specialization.",
       "GitHub signal: 12 repos, 4 with >50 stars.",
     ],
+    red_flags: [],
   },
   {
     id: "2",
     rank: 2,
     initials: "SK",
     name: "Sanya Kapoor",
-    role: "ML Ops Engineer · 4yr",
-    score: 84,
+    current_role: "ML Ops Engineer · 4yr",
+    experience_years: 4,
+    overall_score: 84,
+    confidence: 82,
+    summary: "Solid infrastructure background.",
     signals: [
-      { label: "Semantic", value: 87 },
-      { label: "Trajectory", value: 80 },
-      { label: "Impact", value: 76 },
-      { label: "Velocity", value: 70 },
+      { label: "Semantic", value: 87, explanation: "Matches DevOps needs." },
+      { label: "Trajectory", value: 80, explanation: "Good recent growth." },
+      { label: "Impact", value: 76, explanation: "Built deployment pipelines." },
+      { label: "Velocity", value: 70, explanation: "Learning k8s quickly." },
     ],
     skills: ["Kubernetes", "Terraform"],
     stage: "Interview",
-    reasoning: [
+    green_flags: [
       "Kubernetes mastery aligned with infra needs.",
       "Consistent delivery on scalable architectures.",
     ],
+    red_flags: [],
   },
   {
     id: "3",
     rank: 3,
     initials: "PM",
     name: "Priya Mehta",
-    role: "Data Scientist · 3yr",
-    score: 78,
+    current_role: "Data Scientist · 3yr",
+    experience_years: 3,
+    overall_score: 78,
+    confidence: 75,
+    summary: "Good analytics, needs more engineering.",
     signals: [
-      { label: "Semantic", value: 81 },
-      { label: "Trajectory", value: 72 },
-      { label: "Impact", value: 74 },
-      { label: "Velocity", value: 58 },
+      { label: "Semantic", value: 81, explanation: "Matches data needs." },
+      { label: "Trajectory", value: 72, explanation: "Standard progression." },
+      { label: "Impact", value: 74, explanation: "Delivered analytics dashboards." },
+      { label: "Velocity", value: 58, explanation: "Learning curve on DL." },
     ],
     skills: ["TensorFlow", "SQL"],
     stage: "Screening",
-    reasoning: [
+    green_flags: [
       "Solid analytical foundation but lighter on deep learning frameworks.",
       "Good trajectory in data pipeline optimization.",
     ],
+    red_flags: [],
   },
   {
     id: "4",
     rank: 4,
     initials: "DN",
     name: "Dev Nair",
-    role: "Backend Engineer · 6yr",
-    score: 72,
+    current_role: "Backend Engineer · 6yr",
+    experience_years: 6,
+    overall_score: 72,
+    confidence: 90,
+    summary: "Backend expert, lacks ML.",
     signals: [
-      { label: "Semantic", value: 75 },
-      { label: "Trajectory", value: 68 },
-      { label: "Impact", value: 70 },
-      { label: "Velocity", value: 55 },
+      { label: "Semantic", value: 75, explanation: "Partial match." },
+      { label: "Trajectory", value: 68, explanation: "Stable backend role." },
+      { label: "Impact", value: 70, explanation: "Built reliable APIs." },
+      { label: "Velocity", value: 55, explanation: "No recent ML learning." },
     ],
     skills: ["Go", "Postgres"],
     stage: "Screening",
-    reasoning: [
+    green_flags: [
       "Strong backend engineering fundamentals.",
+    ],
+    red_flags: [
       "Limited direct ML experience, requires onboarding.",
     ],
   },
 ];
+
+const MOCK_DATA: RankingResponse = {
+  job_title: "Senior ML Engineer",
+  total_analyzed: 24,
+  processing_time_ms: 3200,
+  candidates: MOCK_CANDIDATES,
+  model_version: "v2.4.1",
+};
 
 import { AreaChart, Area, ResponsiveContainer } from "recharts";
 import { List, Grid } from "lucide-react";
@@ -131,24 +157,39 @@ const sparkShortlisted = [
 ];
 
 export default function Dashboard(): React.JSX.Element {
+  const { result } = useAnalysis();
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null,
   );
 
   const [searchParams] = useSearchParams();
-  const jobParam = searchParams.get("job");
-  const jobTitle = jobParam
-    ? jobParam
-        .split("-")
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ")
-    : "Senior ML Engineer";
+  const displayData = result ?? MOCK_DATA;
+  const candidates = displayData.candidates;
+  
+  const jobTitle = result
+    ? displayData.job_title
+    : searchParams.get("job")
+      ? searchParams.get("job")!
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ")
+      : "Senior ML Engineer";
+
+  const avgScore = (candidates.reduce((sum, c) => sum + c.overall_score, 0) / candidates.length).toFixed(1);
+  const topCandidate = candidates.length > 0 ? candidates.reduce((prev, curr) => (prev.overall_score > curr.overall_score) ? prev : curr) : null;
 
   return (
     <DashboardLayout>
-      <div className="mb-4 text-[13px] text-text-secondary font-medium tracking-wide">
-        {jobTitle} <span className="text-border-hi mx-1.5">•</span> May 28, 2025{" "}
-        <span className="text-border-hi mx-1.5">•</span> 24 candidates analyzed.
+      <div className="mb-4 text-[13px] text-text-secondary font-medium tracking-wide flex items-center justify-between">
+        <div>
+          {jobTitle} <span className="text-border-hi mx-1.5">•</span> May 28, 2025{" "}
+          <span className="text-border-hi mx-1.5">•</span> {displayData.total_analyzed} candidates analyzed.
+        </div>
+        {result && (
+          <div className="font-mono text-text-muted text-[10px] bg-surface-2 px-2 py-1 rounded border border-border">
+            Live Result · {displayData.processing_time_ms}ms
+          </div>
+        )}
       </div>
       <div className="border border-border rounded-xl overflow-hidden grid grid-cols-4 mb-5 max-[900px]:grid-cols-2">
         <div className="p-4 px-5 bg-surface border-r border-border max-[900px]:border-b max-[900px]:border-r flex flex-col">
@@ -156,7 +197,7 @@ export default function Dashboard(): React.JSX.Element {
             ANALYZED
           </div>
           <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
-            24
+            {displayData.total_analyzed}
           </div>
           <div className="font-mono text-[10px] text-sage mb-2">
             ↑ 8 from last week
@@ -182,7 +223,7 @@ export default function Dashboard(): React.JSX.Element {
             AVG SCORE
           </div>
           <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
-            76.8
+            {avgScore}
           </div>
           <div className="font-mono text-[10px] text-sage mb-2">
             ↑ 2.4% this run
@@ -208,10 +249,10 @@ export default function Dashboard(): React.JSX.Element {
             TOP MATCH
           </div>
           <div className="font-mono font-light text-[28px] text-parchment my-1 leading-[1.1]">
-            91%
+            {topCandidate ? topCandidate.overall_score : 0}%
           </div>
           <div className="font-mono text-[10px] text-text-muted mb-2">
-            → Aditya Rao
+            → {topCandidate ? topCandidate.name : "N/A"}
           </div>
           <div className="h-[40px] w-full mt-auto -ml-1">
             <ResponsiveContainer width="100%" height="100%">
@@ -262,7 +303,7 @@ export default function Dashboard(): React.JSX.Element {
               <span className="text-sm font-medium text-text-primary">
                 Candidates
               </span>
-              <span className="text-sm text-text-muted">(24)</span>
+              <span className="text-sm text-text-muted">({candidates.length})</span>
             </div>
             <div className="flex items-center gap-3">
               <select className="font-sans text-xs bg-surface-2 border border-border text-text-secondary rounded-md px-2.5 py-1.5 outline-none cursor-pointer">
@@ -322,7 +363,7 @@ export default function Dashboard(): React.JSX.Element {
               </div>
             </div>
 
-            {MOCK_CANDIDATES.map((c) => (
+            {candidates.map((c) => (
               <CandidateRow
                 key={c.id}
                 {...c}
@@ -334,7 +375,7 @@ export default function Dashboard(): React.JSX.Element {
 
             <div className="h-10 bg-surface-2 border-t border-border px-4 flex justify-between items-center">
               <div className="font-mono text-[11px] text-text-muted">
-                Showing 1–4 of 24
+                Showing 1–{candidates.length} of {displayData.total_analyzed}
               </div>
               <div className="flex gap-2">
                 <button className="bg-transparent border border-border rounded-md text-text-secondary font-sans text-[11px] px-3 py-1 cursor-pointer transition-colors duration-120 hover:border-border-hi hover:text-text-primary">
@@ -370,7 +411,7 @@ export default function Dashboard(): React.JSX.Element {
                 Resumes analyzed
               </span>
               <span className="font-mono text-[11px] text-parchment-muted text-right">
-                24
+                {displayData.total_analyzed}
               </span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-border">
@@ -378,7 +419,7 @@ export default function Dashboard(): React.JSX.Element {
                 Signals computed
               </span>
               <span className="font-mono text-[11px] text-parchment-muted text-right">
-                96
+                {displayData.total_analyzed * 4}
               </span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-border">
@@ -386,7 +427,7 @@ export default function Dashboard(): React.JSX.Element {
                 Model version
               </span>
               <span className="font-mono text-[11px] text-parchment-muted text-right">
-                v2.4.1
+                {displayData.model_version}
               </span>
             </div>
             <div className="flex justify-between items-center py-2">
@@ -394,7 +435,7 @@ export default function Dashboard(): React.JSX.Element {
                 Processing time
               </span>
               <span className="font-mono text-[11px] text-parchment-muted text-right">
-                3.2s
+                {(displayData.processing_time_ms / 1000).toFixed(1)}s
               </span>
             </div>
           </div>

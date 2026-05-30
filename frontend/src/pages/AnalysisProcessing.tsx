@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { ROUTES } from "@/constants";
+import { useAnalysis } from "@/context/AnalysisContext";
 
 export default function AnalysisProcessing(): React.JSX.Element {
   const navigate = useNavigate();
+  const { pendingAnalysis, setResult, setPendingAnalysis } = useAnalysis();
   const [phaseIndex, setPhaseIndex] = useState(0);
 
   const phases = [
@@ -15,6 +17,14 @@ export default function AnalysisProcessing(): React.JSX.Element {
   ];
 
   useEffect(() => {
+    if (!pendingAnalysis) {
+      void navigate(ROUTES.ANALYSIS_NEW);
+      return;
+    }
+
+    let cancelled = false;
+    const MIN_DISPLAY_MS = 3000;
+    const startTime = Date.now();
     let currentPhase = 0;
     
     // Rotate through phases every 800ms
@@ -25,17 +35,33 @@ export default function AnalysisProcessing(): React.JSX.Element {
       }
     }, 800);
 
-    // After ~3.5 seconds, navigate to dashboard
-    const timeout = setTimeout(() => {
-      clearInterval(interval);
-      void navigate(ROUTES.DASHBOARD);
-    }, 3500);
+    pendingAnalysis
+      .then((response) => {
+        if (cancelled) return;
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
+        setTimeout(() => {
+          if (cancelled) return;
+          clearInterval(interval);
+          setResult(response);
+          setPendingAnalysis(null);
+          void navigate(ROUTES.DASHBOARD);
+        }, remaining);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        clearInterval(interval);
+        console.error('Analysis failed:', err);
+        setPendingAnalysis(null);
+        void navigate(ROUTES.ANALYSIS_NEW);
+        // TODO: show error toast when toast system exists
+      });
 
     return (): void => {
+      cancelled = true;
       clearInterval(interval);
-      clearTimeout(timeout);
     };
-  }, [navigate, phases.length]);
+  }, [navigate, pendingAnalysis, setResult, setPendingAnalysis, phases.length]);
 
   return (
     <div className="min-h-screen w-full bg-ink flex flex-col items-center justify-center animate-fade-in">

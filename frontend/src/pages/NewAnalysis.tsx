@@ -1,13 +1,22 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
+import { useAnalysis } from "@/context/AnalysisContext";
+import { rankCandidates } from "@/services/api";
 
 export default function NewAnalysis(): React.JSX.Element {
   const navigate = useNavigate();
+  const { setPendingAnalysis, weights, reset } = useAnalysis();
   const [jd, setJd] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const step1Complete = jd.trim().length > 0;
+  const step2Active = step1Complete;
+  const step2Complete = files.length > 0;
+  const step3Active = step1Complete && step2Complete;
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
@@ -39,7 +48,12 @@ export default function NewAnalysis(): React.JSX.Element {
   };
 
   const handleRunAnalysis = (): void => {
-    void navigate("/analysis/processing");
+    if (!jd.trim() || files.length === 0) return;
+    setIsLoading(true);
+    reset();
+    const promise = rankCandidates(jd, files, weights);
+    setPendingAnalysis(promise);
+    navigate("/analysis/processing");
   };
 
   return (
@@ -48,27 +62,27 @@ export default function NewAnalysis(): React.JSX.Element {
         <div className="mb-10 animate-fade-up">
           <div className="flex items-center justify-between mb-8 relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-px bg-border z-0" />
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-px bg-parchment z-0 transition-all duration-300" style={{ width: jd.length > 0 && files.length > 0 ? '100%' : (jd.length > 0 || files.length > 0 ? '50%' : '0%') }} />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-px bg-parchment z-0 transition-all duration-300" style={{ width: step3Active ? '100%' : (step1Complete || step2Complete ? '50%' : '0%') }} />
             
             {/* Step 1 */}
-            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${jd.length > 0 ? 'text-parchment' : 'text-parchment'}`}>
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${jd.length > 0 ? 'bg-parchment text-ink border-parchment' : 'bg-surface-3 border-parchment text-parchment'}`}>
+            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors text-parchment`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${step1Complete ? 'bg-parchment text-ink border-parchment' : 'bg-surface-3 border-parchment text-parchment'}`}>
                 1
               </div>
               <span className="text-[11px] uppercase tracking-wider font-mono bg-ink px-2">Define Role</span>
             </div>
 
             {/* Step 2 */}
-            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${files.length > 0 ? 'text-parchment' : (jd.length > 0 ? 'text-parchment-muted' : 'text-text-muted')}`}>
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${files.length > 0 ? 'bg-parchment text-ink border-parchment' : (jd.length > 0 ? 'bg-surface-3 border-parchment-muted text-parchment-muted' : 'bg-surface-2 border-border text-text-muted')}`}>
+            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${step2Complete ? 'text-parchment' : (step2Active ? 'text-parchment-muted' : 'text-text-muted')}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${step2Complete ? 'bg-parchment text-ink border-parchment' : (step2Active ? 'bg-surface-3 border-parchment-muted text-parchment-muted' : 'bg-surface-2 border-border text-text-muted')}`}>
                 2
               </div>
               <span className="text-[11px] uppercase tracking-wider font-mono bg-ink px-2">Upload Resumes</span>
             </div>
 
             {/* Step 3 */}
-            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${jd.length > 0 && files.length > 0 ? 'text-parchment' : 'text-text-muted'}`}>
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${jd.length > 0 && files.length > 0 ? 'bg-surface-3 border-parchment text-parchment' : 'bg-surface-2 border-border text-text-muted'}`}>
+            <div className={`relative z-10 flex flex-col items-center gap-2 bg-ink px-4 transition-colors ${step3Active ? 'text-parchment' : 'text-text-muted'}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-mono transition-colors ${step3Active ? 'bg-surface-3 border-parchment text-parchment' : 'bg-surface-2 border-border text-text-muted'}`}>
                 3
               </div>
               <span className="text-[11px] uppercase tracking-wider font-mono bg-ink px-2">Run Analysis</span>
@@ -203,10 +217,10 @@ export default function NewAnalysis(): React.JSX.Element {
             <button
               type="button"
               onClick={handleRunAnalysis}
-              disabled={!jd || files.length === 0}
+              disabled={isLoading || !jd.trim() || files.length === 0}
               className="bg-parchment text-ink px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-[#cfc0b0] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-parchment transform hover:-translate-y-px active:translate-y-0"
             >
-              Run AI Analysis
+              {isLoading ? "Starting Analysis..." : "Run AI Analysis"}
             </button>
           </div>
         </div>

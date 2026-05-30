@@ -38,9 +38,9 @@ export function CandidateDrawer({
   }
 
   const scoreColor =
-    candidate.score >= 85
+    candidate.overall_score >= 85
       ? "sage"
-      : candidate.score >= 70
+      : candidate.overall_score >= 70
       ? "sand"
       : "rose";
 
@@ -71,14 +71,14 @@ export function CandidateDrawer({
         <div className="mb-6">
           <div className="flex items-baseline gap-2">
             <span className={`font-mono font-light text-[52px] leading-none text-${scoreColor}`}>
-              {candidate.score}
+              {candidate.overall_score}
             </span>
             <span className="font-mono text-[10px] text-text-muted">
               Overall match
             </span>
           </div>
           <div className="font-mono text-[11px] text-sage mt-2">
-            High · 87% certainty
+            High · {String(candidate.confidence)}% certainty
           </div>
         </div>
 
@@ -104,12 +104,21 @@ export function CandidateDrawer({
           AI REASONING
         </div>
         <div className="mb-6 space-y-2">
-          {candidate.reasoning.map((r, i) => (
+          {candidate.green_flags.map((r, i) => (
             <div
-              key={i}
+              key={`green-${String(i)}`}
               className="bg-surface-2 rounded-lg py-2.5 px-3 text-xs text-text-secondary leading-[1.6] flex gap-2 items-start"
             >
-              <ChevronRight size={14} className="text-parchment-muted shrink-0 mt-[2px]" />
+              <ChevronRight size={14} className="text-sage shrink-0 mt-[2px]" />
+              <span>{r}</span>
+            </div>
+          ))}
+          {candidate.red_flags.map((r, i) => (
+            <div
+              key={`red-${String(i)}`}
+              className="bg-surface-2 rounded-lg py-2.5 px-3 text-xs text-text-secondary leading-[1.6] flex gap-2 items-start"
+            >
+              <ChevronRight size={14} className="text-rose shrink-0 mt-[2px]" />
               <span>{r}</span>
             </div>
           ))}

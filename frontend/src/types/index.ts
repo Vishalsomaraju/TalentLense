@@ -22,9 +22,10 @@ export interface User {
   createdAt: number;
 }
 
-export interface CandidateSignal {
+export interface SignalScore {
   label: string;
   value: number;
+  explanation: string;
 }
 
 export interface Candidate {
@@ -32,12 +33,24 @@ export interface Candidate {
   rank: number;
   name: string;
   initials: string;
-  role: string;
-  score: number;
-  signals: CandidateSignal[];
-  reasoning: string[];
+  current_role: string;
+  experience_years: number;
+  overall_score: number;
+  confidence: number;
+  signals: SignalScore[];
+  summary: string;
+  green_flags: string[];
+  red_flags: string[];
   skills: string[];
-  stage: "Screening" | "Interview" | "Shortlisted" | "Rejected";
+  stage: 'Screening' | 'Interview' | 'Shortlisted' | 'Rejected';
+}
+
+export interface RankingResponse {
+  job_title: string;
+  total_analyzed: number;
+  processing_time_ms: number;
+  candidates: Candidate[];
+  model_version: string;
 }
 
 export interface Job {
@@ -46,7 +59,14 @@ export interface Job {
   candidates: number;
   avgScore: number;
   dateCreated: string;
-  status: "Active" | "Closed";
+  status: 'Active' | 'Closed';
+}
+
+export interface AnalysisWeights {
+  semantic: number;
+  trajectory: number;
+  impact: number;
+  velocity: number;
 }
 
 export interface AnalysisRun {
@@ -58,4 +78,21 @@ export interface AnalysisRun {
   topScore: number;
   createdAt: string;
   processingTimeMs: number;
+}
+
+export function deriveInitials(name: string): string {
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+export function normalizeCandidate(raw: Omit<Candidate, 'initials' | 'stage'>): Candidate {
+  return {
+    ...raw,
+    initials: deriveInitials(raw.name),
+    stage: 'Screening',
+  };
 }

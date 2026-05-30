@@ -1,8 +1,11 @@
 import type React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { TopNav } from "../components/layout/TopNav";
 import { SignalBar } from "../components/ui/SignalBar";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from "recharts";
+import { useAnalysis } from "@/context/AnalysisContext";
+import { ChevronRight, AlertCircle } from "lucide-react";
+import { Candidate } from "@/types";
 
 const radarData = [
   { subject: "PyTorch", A: 95, fullMark: 100 },
@@ -12,7 +15,39 @@ const radarData = [
   { subject: "Research", A: 60, fullMark: 100 },
 ];
 
+const MOCK_CANDIDATE: Candidate = {
+  id: "1",
+  rank: 1,
+  initials: "AR",
+  name: "Aditya Rao",
+  current_role: "Senior ML Engineer",
+  experience_years: 5,
+  overall_score: 91,
+  confidence: 87,
+  summary: "Strong PyTorch depth with production deployment experience. Exceptionally strong candidate for this role.",
+  signals: [
+    { label: "Semantic Match", value: 94, explanation: "High keyword and contextual alignment with JD requirements." },
+    { label: "Career Trajectory", value: 88, explanation: "Consistent promotions every ~1.8 years." },
+    { label: "Project Impact", value: 82, explanation: "Led 3 major initiatives at current company." },
+    { label: "Learning Velocity", value: 64, explanation: "Recent tech stack evolution is slower." },
+  ],
+  skills: ["PyTorch", "MLOps", "Transformers", "Kubernetes"],
+  stage: "Shortlisted",
+  green_flags: [
+    "Strong PyTorch depth with production deployment experience.",
+    "Career arc shows deliberate ML platform specialization.",
+  ],
+  red_flags: [
+    "Less exposure to LLM serving architectures compared to traditional CV/NLP.",
+  ],
+};
+
 export default function CandidateDetail(): React.JSX.Element {
+  const { id } = useParams();
+  const { result } = useAnalysis();
+  
+  const candidate = result?.candidates.find((c) => c.id === id) || MOCK_CANDIDATE;
+
   return (
     <div className="min-h-screen bg-ink text-text-primary font-sans">
       <TopNav />
@@ -30,31 +65,24 @@ export default function CandidateDetail(): React.JSX.Element {
           <div className="bg-surface border border-border rounded-xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-14 h-14 rounded-full bg-surface-3 flex items-center justify-center font-mono text-lg text-parchment shrink-0">
-                AR
+                {candidate.initials}
               </div>
               <div>
                 <h1 className="m-0 text-[18px] font-medium text-text-primary mb-1">
-                  Aditya Rao
+                  {candidate.name}
                 </h1>
                 <div className="text-[13px] text-text-secondary">
-                  Senior ML Engineer · 5yr
+                  {candidate.current_role} · {candidate.experience_years}yr exp
                 </div>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-1.5 mb-4">
-              <div className="font-mono text-[10px] bg-surface-3 border border-border px-2 py-[2px] rounded-full text-parchment-muted whitespace-nowrap">
-                PyTorch
-              </div>
-              <div className="font-mono text-[10px] bg-surface-3 border border-border px-2 py-[2px] rounded-full text-parchment-muted whitespace-nowrap">
-                MLOps
-              </div>
-              <div className="font-mono text-[10px] bg-surface-3 border border-border px-2 py-[2px] rounded-full text-parchment-muted whitespace-nowrap">
-                Transformers
-              </div>
-              <div className="font-mono text-[10px] bg-surface-3 border border-border px-2 py-[2px] rounded-full text-parchment-muted whitespace-nowrap">
-                Kubernetes
-              </div>
+              {candidate.skills.map((skill, idx) => (
+                <div key={idx} className="font-mono text-[10px] bg-surface-3 border border-border px-2 py-[2px] rounded-full text-parchment-muted whitespace-nowrap">
+                  {skill}
+                </div>
+              ))}
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-border">
@@ -102,21 +130,21 @@ export default function CandidateDetail(): React.JSX.Element {
 
           <div className="bg-[#141814] border border-[#232c21] rounded-xl p-5 relative overflow-hidden">
             <div className="absolute right-[-20px] bottom-[-20px] text-sage opacity-5 font-mono text-[120px] font-bold leading-none select-none">
-              91
+              {candidate.overall_score}
             </div>
             <div className="font-mono text-[9px] text-sage uppercase tracking-[0.1em] mb-2">
               OVERALL MATCH
             </div>
             <div className="flex items-baseline gap-2">
               <span className="font-mono font-light text-[64px] leading-none text-sage">
-                91
+                {candidate.overall_score}
               </span>
               <span className="font-mono text-[13px] text-[#5c7a56]">/100</span>
             </div>
-            <p className="mt-3 text-[13px] text-[#8dba85] leading-[1.5] max-w-[280px]">
-              Exceptionally strong candidate for this role. Top 2% of the
-              applicant pool based on semantic history and velocity.
-            </p>
+            <div className="font-mono text-[11px] text-text-muted mt-1 flex items-center gap-1.5">
+              <div className={`w-2 h-2 rounded-full ${candidate.confidence >= 80 ? 'bg-sage' : candidate.confidence >= 65 ? 'bg-sand' : 'bg-rose'}`} />
+              {candidate.confidence}% confidence
+            </div>
           </div>
 
           <div className="bg-surface border border-border rounded-xl p-4 flex flex-col gap-2">
@@ -140,41 +168,38 @@ export default function CandidateDetail(): React.JSX.Element {
             <div className="h-12 border-b border-border bg-surface-2 px-5 flex items-center gap-2 font-mono text-[11px] text-parchment-muted tracking-[0.06em] uppercase">
               <span className="text-sage">✦</span> AI Reasoning
             </div>
-            <div className="p-6">
-              <ul className="list-none m-0 p-0 flex flex-col gap-4">
-                <li className="flex gap-3 text-[14px] text-text-secondary leading-[1.6]">
-                  <span className="text-parchment-dim mt-0.5">›</span>
-                  <div>
-                    <strong className="text-text-primary font-medium">
-                      Strong PyTorch depth
-                    </strong>{" "}
-                    with production deployment experience. His GitHub shows
-                    extensive use of custom DDP implementations and distributed
-                    training setups.
-                  </div>
-                </li>
-                <li className="flex gap-3 text-[14px] text-text-secondary leading-[1.6]">
-                  <span className="text-parchment-dim mt-0.5">›</span>
-                  <div>
-                    <strong className="text-text-primary font-medium">
-                      Career arc
-                    </strong>{" "}
-                    shows deliberate ML platform specialization, moving from
-                    applied modeling to MLOps and infrastructure over the last 3
-                    years.
-                  </div>
-                </li>
-                <li className="flex gap-3 text-[14px] text-text-secondary leading-[1.6]">
-                  <span className="text-parchment-dim mt-0.5">›</span>
-                  <div>
-                    <strong className="text-text-primary font-medium">
-                      Potential gap:
-                    </strong>{" "}
-                    Less exposure to LLM serving architectures (vLLM, TGI)
-                    compared to traditional CV/NLP model deployment.
-                  </div>
-                </li>
-              </ul>
+            <div className="p-6 flex flex-col gap-6">
+              <p className="text-[14px] text-text-secondary leading-[1.6] m-0">
+                {candidate.summary}
+              </p>
+
+              {candidate.green_flags.length > 0 && (
+                <div>
+                  <div className="font-mono text-[11px] text-sage uppercase tracking-[0.06em] mb-3">Strengths</div>
+                  <ul className="list-none m-0 p-0 flex flex-col gap-2">
+                    {candidate.green_flags.map((flag, idx) => (
+                      <li key={idx} className="flex gap-3 text-[13px] text-text-secondary leading-[1.6] p-3 rounded-lg" style={{ backgroundColor: 'rgba(141, 186, 133, 0.06)' }}>
+                        <ChevronRight size={16} className="text-sage shrink-0 mt-0.5" />
+                        <div>{flag}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {candidate.red_flags.length > 0 && (
+                <div>
+                  <div className="font-mono text-[11px] text-rose uppercase tracking-[0.06em] mb-3">Gaps</div>
+                  <ul className="list-none m-0 p-0 flex flex-col gap-2">
+                    {candidate.red_flags.map((flag, idx) => (
+                      <li key={idx} className="flex gap-3 text-[13px] text-text-secondary leading-[1.6] p-3 rounded-lg" style={{ backgroundColor: 'rgba(235, 115, 115, 0.06)' }}>
+                        <AlertCircle size={16} className="text-rose shrink-0 mt-0.5" />
+                        <div>{flag}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </section>
 
@@ -183,53 +208,21 @@ export default function CandidateDetail(): React.JSX.Element {
               Signal Deep Dive
             </div>
             <div className="p-6 grid grid-cols-2 gap-x-12 gap-y-8 max-[980px]:grid-cols-1">
-              <div>
-                <SignalBar
-                  label="Semantic Match"
-                  value={94}
-                  colorVariant="sage"
-                />
-                <p className="mt-3 text-[12px] text-text-muted leading-[1.5]">
-                  High keyword and contextual alignment with JD requirements for
-                  distributed training and Kubernetes.
-                </p>
-              </div>
-              <div>
-                <SignalBar
-                  label="Career Trajectory"
-                  value={88}
-                  colorVariant="sage"
-                  delayMs={100}
-                />
-                <p className="mt-3 text-[12px] text-text-muted leading-[1.5]">
-                  Consistent promotions every ~1.8 years. Transitioned to senior
-                  roles faster than industry average.
-                </p>
-              </div>
-              <div>
-                <SignalBar
-                  label="Project Impact"
-                  value={82}
-                  colorVariant="sand"
-                  delayMs={200}
-                />
-                <p className="mt-3 text-[12px] text-text-muted leading-[1.5]">
-                  Led 3 major initiatives at current company. Business impact
-                  quantified in 2/3 cases.
-                </p>
-              </div>
-              <div>
-                <SignalBar
-                  label="Learning Velocity"
-                  value={64}
-                  colorVariant="rose"
-                  delayMs={300}
-                />
-                <p className="mt-3 text-[12px] text-text-muted leading-[1.5]">
-                  Recent tech stack evolution is slower. Has remained within the
-                  same core ecosystem for 3+ years.
-                </p>
-              </div>
+              {candidate.signals.map((s, idx) => (
+                <div key={idx}>
+                  <SignalBar
+                    label={s.label}
+                    value={s.value}
+                    colorVariant={s.value >= 80 ? "sage" : s.value >= 65 ? "sand" : "rose"}
+                    delayMs={idx * 100}
+                  />
+                  {s.explanation && (
+                    <p className="mt-3 text-[11px] text-text-muted leading-[1.5] italic">
+                      {s.explanation}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
           </section>
 

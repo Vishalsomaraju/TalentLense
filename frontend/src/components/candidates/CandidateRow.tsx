@@ -4,15 +4,15 @@ import { Badge } from "../ui/Badge";
 import { SignalBar } from "../ui/SignalBar";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-import { CandidateSignal } from "@/types";
+import { SignalScore } from "@/types";
 
 export interface CandidateRowProps {
   rank: number;
   initials: string;
   name: string;
-  role: string;
-  score: number;
-  signals: CandidateSignal[];
+  current_role: string;
+  overall_score: number;
+  signals: SignalScore[];
   skills: string[];
   stage: "Screening" | "Interview" | "Shortlisted" | "Rejected";
   onClick?: () => void;
@@ -22,8 +22,8 @@ export function CandidateRow({
   rank,
   initials,
   name,
-  role,
-  score,
+  current_role,
+  overall_score,
   signals,
   skills,
   stage,
@@ -31,7 +31,7 @@ export function CandidateRow({
 }: CandidateRowProps): React.JSX.Element {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  const scoreColor = score >= 85 ? "sage" : score >= 70 ? "sand" : "rose";
+  const scoreColor = overall_score >= 85 ? "sage" : overall_score >= 70 ? "sand" : "rose";
   const scoreTextClass = `text-${scoreColor}`;
   const scoreBgClass = `bg-${scoreColor}`;
 
@@ -76,19 +76,19 @@ export function CandidateRow({
               {name}
             </div>
             <div className="font-sans text-[11px] text-text-secondary">
-              {role}
+              {current_role}
             </div>
           </div>
         </div>
 
         <div className="w-[68px] text-right flex flex-col items-end gap-[2px]">
           <div className={`font-mono font-light text-xl leading-none ${scoreTextClass}`}>
-            {score}
+            {overall_score}
           </div>
           <div className="w-12 h-[3px] bg-surface-3 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-700 ease-in-out ${scoreBgClass}`}
-              style={{ width: `${String(score)}%` }}
+              style={{ width: `${String(overall_score)}%` }}
             />
           </div>
         </div>
